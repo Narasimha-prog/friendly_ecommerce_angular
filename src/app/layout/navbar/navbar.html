@@ -1,0 +1,105 @@
+<div class="navbar bg-base-100">
+  <!-- Logo -->
+  <div class="navbar-start">
+    <div class="dropdown">
+      <a class="btn btn-ghost text-xl" routerLink="/">
+        <div class="border-1 btn-primary logo p-2 rounded-xl">EC</div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Menu -->
+  <div class="navbar-center flex">
+    <ul class="menu menu-sm sm:menu-lg menu-horizontal py-1">
+      <li><a routerLink="/">Home</a></li>
+
+      <!-- Products dropdown -->
+      <li>
+        <details #productsMenu>
+          <summary>Products</summary>
+          <ul class="z-30">
+            @if(categoryQuery.isSuccess() && categoryQuery.data()){
+              @for (category of categoryQuery.data().content!; track category) {
+                    
+                <li><a [routerLink]="['products']" 
+                  [queryParams]="{category: category.publicId}"
+                  (click)="closeMenu(productsMenu)"
+                  (clickOutside)="closeMenu(productsMenu)"
+                  >{{category.name}}</a></li>
+              }
+            }
+          
+          </ul>
+        </details>
+      </li>
+
+      <!-- Admin dropdown -->
+       @if(connectedUserQuery?.status()==='success' && authService.hasAnyAuthorities(connectedUserQuery?.data()!,'ROLE_ADMIN')) {
+      <li>
+        <details #adminMenu>
+          <summary>Admin</summary>
+          <ul class="z-30">
+              <li><a routerLink="admin/categories/list"
+               (click)="closeMenu(adminMenu)" 
+               (clickOutside)="closeMenu(adminMenu)">Categories</a>
+              </li>
+                <li><a routerLink='admin/products/list'
+               (click)="closeMenu(adminMenu)" 
+               (clickOutside)="closeMenu(adminMenu)">Products</a>
+              </li>
+              <li><a routerLink='admin/orders/list'
+               (click)="closeMenu(adminMenu)" 
+               (clickOutside)="closeMenu(adminMenu)">Orders</a>
+              </li>
+              
+          </ul>
+        </details>
+      </li>
+    }
+    </ul>
+  </div>
+
+  <!-- User & Cart -->
+  <div class="navbar-end pe-4 flex align-items-center">
+    <div class="dropdown dropdown-end me-4">
+      <div tabindex="0" role="button">
+        <ng-container *ngIf="isConnected() &&  defaultIcon">
+          <div class="border border-solid rounded-full">
+            <img [src]=""
+                 alt="user-avatar"
+                 class="avatar-unknown rounded-full"
+                 width="45px" />
+          </div>
+        </ng-container>
+        <ng-template #defaultIcon>
+          <fa-icon [icon]="['fas', 'user']" class="menu-icon"></fa-icon>
+        </ng-template>
+      </div>
+
+      <!-- Dropdown menu changes based on connection -->
+      <ul *ngIf="isConnected(); else loggedOutMenu"
+          class="dropdown-content menu menu-lg bg-base-100 rounded-box z-10 w-52 p-2 shadow">
+          <li><button  class="link" (click)="closeDropDownMenu()" [routerLink]="['/users/orders']">My Orders</button></li>
+        <li> <button class="link" (click)="logOut()">logOut</button></li>
+      </ul>
+  
+
+      <ng-template #loggedOutMenu>
+        <ul class="dropdown-content menu menu-lg bg-base-100 rounded-box z-10 w-52 p-2 shadow">
+          <li><button class="link" (click)="logIn()">Login</button></li>
+        </ul>
+      </ng-template>
+    </div>
+
+    <!-- Cart -->
+    <div class="dropdown dropdown-end me-2" routerLink="/cart">
+      <div tabindex="0" role="button">
+        <div class="indicator">
+          <span class="indicator-item badge badge-primary">{{nbItemsInCart}}</span>
+         <fa-icon [icon]="['fas', 'cart-shopping']" class="menu-icon"></fa-icon>
+        </div>
+       
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,66 @@
+@if(productQuery.isSuccess()){
+<div class="flex flex-col lg:flex-row justify-center items-center w-full">
+    <div class="lg:me-5">
+        <img [src]="'data:'+productQuery.data().pictures[0].mineType+';base64,'+productQuery.data().pictures[0].file"
+            alt="{{productQuery.data().name}}" width="500px"
+            class="h-60 sm:h-72 md:h-80 lg:h-96 w-auto object-contain mx-auto" />
+    </div>
+
+
+    <div class="w-full lg:w-auto">
+        <h1 class="text-3xl font-bold "> {{productQuery.data().name}} - {{productQuery.data().size}}</h1>
+        @if(productQuery.data().nbInStock!>0){
+        <span class="text-green-500 text-lg"><span class="font-bold text-black me-2">{{productQuery.data().nbInStock}} </span>  In Stock</span>
+        }
+        @else {
+        <span class="text-red-500 text-lg">Out of Stock</span>
+        }
+
+        @if(productQuery.data().featured){
+        <div class="rounded-md border w-32 p-2 text-center border-black my-5">
+            Best Seller
+        </div>
+        }
+        <div class="text-2xl my-5">
+            <span class="line-through me-2">{{productQuery.data().price! + 200|currency}}</span>
+            <span class=" me-2">{{productQuery.data().price!|currency}}</span>
+        </div>
+
+        <div class="">Brand: <span class="font-bold">{{productQuery.data().brand}}</span></div>
+
+        <div class="flex items-center mt-1">
+            <div class="me-1 ">Color:</div>
+            <div class="h-5 w-5 rounded-full" [ngStyle]="{'background-color':productQuery.data().color}"></div>
+        </div>
+        <div class="">Size: <span class="font-bold">{{productQuery.data().size}}</span></div>
+        <div class="my-5 w-96">
+            <h2 class="text-xl font-bold">Description:</h2>
+            <p class="text-justify">{{productQuery.data().description}}</p>
+
+        </div>
+
+        <button class="btn btn-primary mt-5 w-full lg:w-64" [disabled]="productQuery.data().nbInStock !<= 0"
+        (click)="addToCart(productQuery.data()!)"
+        >
+
+            <fa-icon [icon]="['fas',iconAddToCart]" class="me-2"></fa-icon>
+            {{labelAddToCart}}
+        </button>
+    </div>
+</div>
+}@else if (productQuery.isPending()) {
+    <div class="w-full justify-center flex">
+        <span class="loading loading-spinner loading-lg"></span>
+    </div>
+}
+<div class="my-10">
+    <h2 class="text-2xl font-bold mb-7 ms-5 sm:ms-0">You may also like</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:gid-cols-4 xl:grid-cols-5 gap-8 sm:gap-5 ">
+        @for(product of relatedProductsQuery.data()?.content!; track product.publicId){
+
+          <app-product-card [product]="product"></app-product-card>
+        }
+    </div>
+
+</div>

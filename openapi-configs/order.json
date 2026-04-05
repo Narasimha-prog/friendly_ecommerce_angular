@@ -1,0 +1,10 @@
+{
+ 
+  "input": "src/openapi/order-service.json",
+  "output": "src/app/api/order",
+  "generateServices": true,
+  "servicePrefix": "Order",
+  "module": "OrderApiModule",
+  "configuration": "OrderApiConfiguration",
+  "strict": true
+}

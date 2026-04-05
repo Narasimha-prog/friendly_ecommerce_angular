@@ -1,0 +1,10 @@
+{
+
+  "input": "src/openapi/product-service.json",
+  "output": "src/app/api/product",
+  "generateServices": true,
+  "servicePrefix": "Order",
+  "module": "ProductApiModule",
+  "configuration": "ProductApiConfiguration",
+  "strict": true
+}

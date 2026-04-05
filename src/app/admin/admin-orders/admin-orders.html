@@ -1,0 +1,77 @@
+<div class="w-full justify-between items-center">
+   <div>
+      <h1 class="text-2xl font-bold ">Your Orders</h1>
+      <div>Here the list of your orders</div>
+   </div>
+</div>
+<div class="border-t w-full border-solid border-gray-300 mt-2 mb-5 ">
+
+</div>
+@if (orderQuery.isSuccess() && orderQuery.data().page.totalElements!==0) {
+<div class="overflow-x-auto border border-gray-300 rounded-md">
+    <table class="table table-lg table-zebra">
+      <thead class="border-gray-300">
+        <tr class="border-gray-300">
+            <th>#</th>
+            <th>Products</th>
+            <th>Status</th>
+            <th>Email</th>
+            <th>Address</th>
+            <th>No of items</th>
+            <th>Total Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for(order of orderQuery.data().content!;track  order.publicId;let i=$index){
+         <tr class="border-t-2  border-gray-300 ">
+            <th>{{i+1}}</th>
+             <td>{{computeItemName(order.orderedItems)}}</td>
+             <td>{{order.status}}</td>
+             <td>{{order.email}}</td>
+             <td>{{order.address}}</td>
+             <td>{{computeItemQuantity(order.orderedItems)}}</td>
+             <td>{{computeTotal(order.orderedItems) | currency}}</td>
+        </tr>
+        }
+       
+      </tbody>
+    </table>
+</div>
+<div class="flex justify-between items-center mt-4">
+  <button class="btn btn-outline" 
+          [disabled]="pageRequest.page === 0"
+          (click)="prevPage()">
+    Previous
+  </button>
+
+  @for(page of totalPagesArray(); track $index; let idx = $index) {
+  <button class="join-item btn"
+          [class.btn-active]="idx === pageRequest.page"
+          (click)="setPage(idx)">
+    {{ idx + 1 }}
+  </button>
+}
+
+  <button class="btn btn-outline"
+          [disabled]="pageRequest.page === (orderQuery.data().page.totalPages) - 1"
+          (click)="nextPage()">
+    Next
+  </button>
+
+
+</div>
+
+}@else if (orderQuery.isPending()) {
+    <div class="w-full justify-center flex">
+        <span class="loading loading-spinner loading-lg"></span>
+    </div>
+}@else if (orderQuery.data()?.page?.totalElements===0) {
+    <div class="alert alert-info">
+     <fa-icon [icon]="['fas','circle-exclamation']"  size="2x" ></fa-icon>
+     <span>No Orders created yet.</span>
+    </div>
+}@else if (orderQuery.isError() && checkIfPlatFormBrowser()) {
+    <div class="alert alert-error">
+    <span>Error! Failed to load orders! </span>
+    </div>
+}

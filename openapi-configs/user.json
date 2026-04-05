@@ -1,0 +1,8 @@
+{
+  "input": "src/openapi/user-service.json",
+  "output": "src/app/api/user",         
+  "servicePrefix": "User",              
+  "module": "UserApiModule",           
+  "configuration": "UserApiConfiguration",
+  "strict": true
+}

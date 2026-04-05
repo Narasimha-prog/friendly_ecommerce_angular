@@ -1,0 +1,10 @@
+{
+ 
+  "input": "src/openapi/inventory-service.json",
+  "output": "src/app/api/inventory",
+  "generateServices": true,
+  "servicePrefix": "Inventory",
+  "module": "InventoryApiModule",
+  "configuration": "InventoryApiConfiguration",
+  "strict": true
+}

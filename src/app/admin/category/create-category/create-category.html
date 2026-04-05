@@ -1,0 +1,39 @@
+<div class="grid grid-cols-3">
+  <div></div>
+  <form id="createForm" (ngSubmit)="create()" [formGroup]="createCategoryForm" class="flex flex-col gap-3">
+    <h1 class="text-lg font-bold">Create new category</h1>
+
+    <label class="form-control w-full flex flex-col gap-2">
+      <div class="label">
+        <span class="label-text">Name</span>
+      </div>
+      <input type="text" placeholder="Type name here"
+        class="input input-bordered w-full"
+        formControlName="name"
+        [class.input-error]="name.invalid && !name.untouched"/>
+
+      <div class="label">
+        <span class="label-text-alt text-red-600" *ngxControlError="name; track: 'required'">
+          Name is required
+        </span>
+         <!-- Min length error -->
+  <span class="label-text-alt text-red-600" *ngxControlError="name; track: 'minlength'">
+    Name must be at least 3 characters long
+  </span>
+      </div>
+    </label>
+
+    <!-- Centered button -->
+    <button type="submit"
+      class="btn btn-primary btn-wide mt-3 mx-auto flex justify-center"
+      [class.btn-disabled]="loading || createCategoryForm.invalid"
+      [disabled]="createCategoryForm.invalid">
+
+      @if(loading) {
+        <span class="loading loading-spinner"></span>
+      }
+      Create category
+    </button>
+  </form>
+  <div></div>
+</div>

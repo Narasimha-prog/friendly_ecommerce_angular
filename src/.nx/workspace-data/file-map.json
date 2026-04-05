@@ -1,0 +1,163 @@
+{
+  "version": "6.0",
+  "nxVersion": "21.2.4",
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {},
+    "nonProjectFiles": [
+      {
+        "file": "app/admin/admin-product.spec.ts",
+        "hash": "2693072248394309618"
+      },
+      {
+        "file": "app/admin/admin-product.ts",
+        "hash": "3752121024376322412"
+      },
+      {
+        "file": "app/admin/model/product.model.ts",
+        "hash": "13994909919317595649"
+      },
+      {
+        "file": "app/app.config.server.ts",
+        "hash": "8248156999075545377"
+      },
+      {
+        "file": "app/app.config.ts",
+        "hash": "16611488773064716856"
+      },
+      {
+        "file": "app/app.html",
+        "hash": "6262837962366320906"
+      },
+      {
+        "file": "app/app.routes.server.ts",
+        "hash": "16960858348243221237"
+      },
+      {
+        "file": "app/app.routes.ts",
+        "hash": "6185150965714414910"
+      },
+      {
+        "file": "app/app.scss",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "app/app.ts",
+        "hash": "12997235389192163086"
+      },
+      {
+        "file": "app/auth/oauth2.spec.ts",
+        "hash": "11013140110764672287"
+      },
+      {
+        "file": "app/auth/oauth2.ts",
+        "hash": "11581981056295309067"
+      },
+      {
+        "file": "app/auth/ssr-storage.spec.ts",
+        "hash": "10146317522067330470"
+      },
+      {
+        "file": "app/auth/ssr-storage.ts",
+        "hash": "13814304270238857054"
+      },
+      {
+        "file": "app/layout/footer/footer.html",
+        "hash": "5519718757042473229"
+      },
+      {
+        "file": "app/layout/footer/footer.scss",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "app/layout/footer/footer.spec.ts",
+        "hash": "7744090216285380655"
+      },
+      {
+        "file": "app/layout/footer/footer.ts",
+        "hash": "13824787520258125650"
+      },
+      {
+        "file": "app/layout/navbar/navbar.html",
+        "hash": "17646012842923276870"
+      },
+      {
+        "file": "app/layout/navbar/navbar.scss",
+        "hash": "6550150654503095495"
+      },
+      {
+        "file": "app/layout/navbar/navbar.spec.ts",
+        "hash": "456877976115415576"
+      },
+      {
+        "file": "app/layout/navbar/navbar.ts",
+        "hash": "10923699172670030882"
+      },
+      {
+        "file": "app/shared/font-awsome-icons.ts",
+        "hash": "9821787714748326236"
+      },
+      {
+        "file": "app/shared/model/request.model.ts",
+        "hash": "6542531635982544602"
+      },
+      {
+        "file": "app/shared/model/toast/toast-info.model.ts",
+        "hash": "16035539303441555760"
+      },
+      {
+        "file": "app/shared/model/toast/toast.spec.ts",
+        "hash": "1631298123703681556"
+      },
+      {
+        "file": "app/shared/model/toast/toast.ts",
+        "hash": "11331890531120167033"
+      },
+      {
+        "file": "app/shared/model/user.model.ts",
+        "hash": "8629484715523136182"
+      },
+      {
+        "file": "app/token.ts",
+        "hash": "2059442685287294696"
+      },
+      {
+        "file": "environment/environment.devlopment.ts",
+        "hash": "10877001286238488137"
+      },
+      {
+        "file": "environment/environment.production.ts",
+        "hash": "15665417326659284582"
+      },
+      {
+        "file": "environment/environment.ts",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "index.html",
+        "hash": "16500305613694900527"
+      },
+      {
+        "file": "main.server.ts",
+        "hash": "17902611827504992161"
+      },
+      {
+        "file": "main.ts",
+        "hash": "3314327030169821486"
+      },
+      {
+        "file": "nx",
+        "hash": "3244421341483603138"
+      },
+      {
+        "file": "server.ts",
+        "hash": "4605081636799508606"
+      },
+      {
+        "file": "styles.scss",
+        "hash": "627404216122951114"
+      }
+    ]
+  }
+}

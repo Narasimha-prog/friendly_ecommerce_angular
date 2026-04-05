@@ -1,0 +1,20 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 md:grid-cols-3  lg:grid-cols-4  w-full">
+  
+   @if (featuredProductQuery.isSuccess()){
+        
+    @for (product of featuredProductQuery.data().content; track product.publicId) {
+        
+    <app-product-card [product]="product"></app-product-card>
+    }
+   }
+</div>
+@if(featuredProductQuery.isPending()){
+    <div class="flex w-full justify-center">
+      <span class="loading loading-spinner loading-lg "></span>
+    </div>
+}@else if(featuredProductQuery.isError()){
+  <div class="alert alert-error">
+   <span class="">Error! Failed to Load Featured Products,Please try again</span>
+  </div>
+  
+}

@@ -1,0 +1,10 @@
+{
+
+  "input": "src/openapi/payment-service.json",
+  "output": "src/app/api/payment",
+  "generateServices": true,
+  "servicePrefix": "Payment",
+  "module": "PaymentApiModule",
+  "configuration": "PaymentApiConfiguration",
+  "strict": true
+}
