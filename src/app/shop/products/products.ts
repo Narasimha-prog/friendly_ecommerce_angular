@@ -21,14 +21,12 @@ import { ProductCard } from '../../hero/product-card';
 export class ProductsComponent {
 
   category = injectQueryParams('category');
-
   size = injectQueryParams('size');
-
   sort = injectQueryParams('sort');
 
   productService = inject(UserProductService);
   router = inject(Router);
-  
+
   toastService = inject(Toast);
 
   pageRequest: Pagination = {
@@ -36,6 +34,7 @@ export class ProductsComponent {
     size: 20,
     sort: ['createdDate,desc'],
   };
+
 
   filterProducts: ProductFilter = {
     category: this.category(),
@@ -94,5 +93,6 @@ export class ProductsComponent {
     this.lastCategory = this.category()!;
   }
 
-  // protected readonly filter = filter;
+  
+  
 }

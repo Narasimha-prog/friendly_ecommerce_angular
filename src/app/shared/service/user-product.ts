@@ -3,8 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { createPaginationOption, Page, Pagination } from '../model/request.model';
 import { ProductFilter } from '../../admin/model/product.model';
 import { Product, ProductCategory } from '../../admin/model/product.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { getAll, getById } from '../../api/product/functions';
+import { ProductApiConfiguration } from '../../api/product/product-api-configuration';
+import { CategoryResponseDto, ProductResponseDto } from '../../api/product/models';
+import { StrictHttpResponse } from '../../api/strict-http-response';
 
 
 @Injectable({
@@ -12,13 +16,19 @@ import { environment } from '../../../environments/environment';
 })
 export class UserProductService {
 
+private http = inject(HttpClient);
+private productConfig=inject(ProductApiConfiguration);
 
-  findAllCategories(): Observable<Page<ProductCategory>> {
-  
-    return this.http.get<Page<ProductCategory>>(`${environment.apiUrl}/categories`);
-  }
 
-  http=inject(HttpClient);
+  findAllCategories(): Observable<Array<CategoryResponseDto>> {
+  return getAll(this.http, this.productConfig.rootUrl).pipe(
+    // Extract only the array from the full HTTP response object
+    map((response: StrictHttpResponse<Array<CategoryResponseDto>>) => {
+      return response.body;
+    })
+  );
+}
+
 
   public findAllFeaturedProducts(pageRequest:Pagination):Observable<Page<Product>>{
     const params=createPaginationOption(pageRequest);
@@ -26,9 +36,10 @@ export class UserProductService {
 
   }
 
-  public findOneProduct(publicId:string):Observable<Product>{
-    const params=new HttpParams().set('publicId',publicId);
-    return this.http.get<Product>(`${environment.apiUrl}/products-shop/find-one`,{params});
+  public findOneProduct(publicId:string):Observable<ProductResponseDto>{
+    return getById(this.http,this.productConfig.rootUrl,{id:publicId}).pipe(
+map((response:StrictHttpResponse<ProductResponseDto>) => (response.body))
+    )
   }
 
   public findProductsRelatedToCategory(pageRequest:Pagination,publicId:string):Observable<Page<Product>>{

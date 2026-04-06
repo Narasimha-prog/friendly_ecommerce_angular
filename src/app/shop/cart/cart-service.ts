@@ -5,6 +5,7 @@ import { Cart, CartItemAdd, StripeSession } from '../../shared/model/cart.model'
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
+import { LocalStorageService } from '../../auth/local-storage';
 
 
 
@@ -14,16 +15,15 @@ import { Router } from '@angular/router';
 export class CartService {
 
 
- routerService=inject(Router)
-
+   
+  routerService=inject(Router);
+  localStorageService=inject(LocalStorageService);
   platformId=inject(PLATFORM_ID);
-
-
   http=inject(HttpClient);
 
 
   private keyCartStorage="cart";
-  private keySessionId="stripeSessionId"
+  private keySessionId="razorSessionId"
 
   private addedToCart$=new BehaviorSubject<Array<CartItemAdd>>([]);
 
@@ -38,6 +38,7 @@ constructor(){
 
 
 private getCartFromLocalStorage(): Array<CartItemAdd> {
+  
   if (isPlatformBrowser(this.platformId)) {
     const cartProducts = localStorage.getItem(this.keyCartStorage);
 

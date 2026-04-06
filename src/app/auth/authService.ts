@@ -8,9 +8,10 @@ import { createUser, getUserByEmail, getUserById } from '../api/user/functions';
 import { UserApiConfiguration } from '../api/user/user-api-configuration';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { isPlatformBrowser } from '@angular/common';
-import { firstValueFrom, of } from 'rxjs';
-import { Router } from 'express';
+import { firstValueFrom, map, Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { AuthenticationResponseDto } from '../api/auth/models';
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +35,18 @@ private readonly guestUser: UserResponseDto = {
   roles: [] // Empty array means they can't see Admin/Seller menus
 };
 
+ logIn(credentials?: any) : Observable<AuthenticationResponseDto | null>{
+    if (!credentials) {
+      this.router.navigate(['/users/login']);
+      return of(null);
+    }
+    return login(this.http, this.authConfig.rootUrl, { body: credentials }).pipe(
+    // 2. We use map to "Unpack" the Box and just return the Letter (body)
+    map(response => response.body as AuthenticationResponseDto)
+  );
+
+  }
+
  fetch() {
     return this.connectedUserQuery;
 
@@ -41,7 +54,8 @@ private readonly guestUser: UserResponseDto = {
 private get router() {
     return this.injector.get(Router);
   }
-  private async fetchUser(): Promise<UserResponseDto> {
+
+     private async fetchUser(): Promise<UserResponseDto> {
 
     if (isPlatformBrowser(this.platformId)) {
 
@@ -55,14 +69,15 @@ private get router() {
       const isExpired = decoded.exp * 1000 < Date.now();
 
     if (isExpired) {
-      this.logOut(); // Clears everything if expired
+      this.logOut();        // Clears everything if expired
       return this.guestUser;
     }
+   
       //call using user id
       const response = await firstValueFrom(
         getUserById(this.http, this.userConfig.rootUrl, { id: decoded.sub })
       );
-
+  
       //send response
       return response.body ?? this.guestUser;// Returns UserResponseDto with firstName, etc.
       
@@ -73,14 +88,7 @@ private get router() {
     return { email: this.notConnected, roles: [] };
   }
 
-  logIn(credentials?: any) {
-    if (!credentials) {
-      this.router.navigate(['/users/login']);
-      return of(null);
-    }
-    
-    return login(this.http, this.authConfig.rootUrl, { body: credentials });
-  }
+ 
 
  public connectedUserQuery = injectQuery(() => ({
     queryKey: ['connected-user'],

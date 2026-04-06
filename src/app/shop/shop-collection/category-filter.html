@@ -11,10 +11,10 @@
     </a>
 
     <!-- Categories -->
-    @for (category of categoryQuery.data().content!; track category) {
+    @for (category of categoryQuery.data(); track category) {
       <a 
         [routerLink]="['/shop/collection/products']"
-        [queryParams]="{ category: category.publicId }"
+        [queryParams]="{ category: category.id }"
         routerLinkActive="font-bold border-b-2 border-blue-500"
       >
         {{ category.name }}

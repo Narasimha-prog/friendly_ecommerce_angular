@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 
@@ -17,23 +17,7 @@ import { AuthService } from '../../auth/authService';
 })
 export class Navbar implements OnInit{
 
-  ngOnInit(): void {
-   this.listenToCart();
-  }
 
-  nbItemsInCart=0;
-
-  listenToCart() {
-    this.cartService.addedToCart.subscribe((productsIncart)=>{
-      this.nbItemsInCart=productsIncart.reduce((acc,product)=> acc+product.quantity,0);
-    
-    })
-  }
-  
-
-closeMenu(menu: HTMLDetailsElement) {
-menu.removeAttribute('open');
-}
 
   authService = inject(AuthService);
   
@@ -41,11 +25,31 @@ menu.removeAttribute('open');
 
   cartService=inject(CartService);
 
+  ngOnInit(): void {
+   this.listenToCart();
+  }
+
+  nbItemsInCart=0;
+
+  listenToCart() {
+    this.cartService.addedToCart.subscribe((productsInCart)=>{
+    this.nbItemsInCart=productsInCart.reduce((acc,product)=> acc+product.quantity,0);
+    
+    })
+  }
+  
+
+  closeMenu(menu: HTMLDetailsElement) {
+      menu.removeAttribute('open');
+    
+  }
+
+
 
 
   categoryQuery=injectQuery(()=>({
     queryKey:['categories'],
-    queryFn:()=> firstValueFrom(this.productService.findAllCategories())
+    queryFn:()=> firstValueFrom(this.productService.findAllCategories()),
   }))
 
 
@@ -64,7 +68,9 @@ menu.removeAttribute('open');
   }
 
   isConnected(): boolean {
-    return this.connectedUserQuery?.status()==='success'&&  this.connectedUserQuery.data()?.email !== this.authService.notConnected;
+    console.log(this.connectedUserQuery.status()==='success'  &&  this.connectedUserQuery.data()?.email !== this.authService.notConnected)
+    console.log(this.connectedUserQuery.data()?.email)
+    return this.connectedUserQuery.status() ==='success' &&  this.connectedUserQuery.data()?.email !== this.authService.notConnected;
   }
 
   closeDropDownMenu() {
