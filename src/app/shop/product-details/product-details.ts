@@ -40,8 +40,8 @@ export class ProductDetails {
     sort:[]
    }
 
-labelAddToCart='Add to Cart'
-iconAddToCart='shopping-cart'
+    labelAddToCart='Add to Cart'
+    iconAddToCart='shopping-cart'
 
    productQuery=injectQuery(()=>(
     {
@@ -56,6 +56,7 @@ iconAddToCart='shopping-cart'
       queryFn:()=> firstValueFrom( this.productService.findProductsRelatedToCategory(this.pageRequest,this.publicId()!))
     }
    ));
+
 constructor(){
   effect(()=>{
     this.handlePublicIdChange();
@@ -93,19 +94,19 @@ constructor(){
    }
 
 
-   addToCart(productToAdd:Product){
+  //  addToCart(productToAdd:Product){
 
-    this.cartService.addToCart(productToAdd.publicId,'add');
-    this.labelAddToCart='Added to cart';
-    this.iconAddToCart='check';
+  //   this.cartService.addToCart(productToAdd.publicId,'add');
+  //   this.labelAddToCart='Added to cart';
+  //   this.iconAddToCart='check';
 
-    interval(3000).pipe(take(1)).subscribe(
-      ()=>{
-             this.labelAddToCart='Add to Cart'
-             this.iconAddToCart='shopping-cart'
-      }
-    );
-   }
+  //   interval(3000).pipe(take(1)).subscribe(
+  //     ()=>{
+  //            this.labelAddToCart='Add to Cart'
+  //            this.iconAddToCart='shopping-cart'
+  //     }
+  //   );
+  //  }
   }
   
 

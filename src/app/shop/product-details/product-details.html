@@ -1,66 +1,109 @@
-@if(productQuery.isSuccess()){
-<div class="flex flex-col lg:flex-row justify-center items-center w-full">
-    <div class="lg:me-5">
-        <img [src]="'data:'+productQuery.data().pictures[0].mineType+';base64,'+productQuery.data().pictures[0].file"
-            alt="{{productQuery.data().name}}" width="500px"
-            class="h-60 sm:h-72 md:h-80 lg:h-96 w-auto object-contain mx-auto" />
+
+@if (productQuery.isSuccess()) {
+    @let product = productQuery.data();
+    <div class="flex flex-col lg:flex-row justify-center items-start w-full gap-12 p-6">
+        
+        <div class="lg:flex-1 w-full max-w-2xl mx-auto">
+            @if (product.imageUrls && product.imageUrls.length > 0) {
+                <img [src]="product.imageUrls[0]"
+                     [alt]="product.name"
+                     class="h-72 sm:h-96 lg:h-[550px] w-full object-contain rounded-2xl bg-white shadow-md border border-gray-100" />
+                
+                @if (product.imageUrls.length > 1) {
+                    <div class="flex gap-2 mt-4 overflow-x-auto pb-2">
+                        @for (url of product.imageUrls; track $index) {
+                            <img [src]="url" class="h-20 w-20 object-cover rounded-md border cursor-pointer hover:border-primary" />
+                        }
+                    </div>
+                }
+            } @else {
+                <div class="h-72 w-full bg-gray-50 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200">
+                    <fa-icon [icon]="['fas', 'image']" class="text-gray-300 text-5xl mb-2"></fa-icon>
+                    <span class="text-gray-400 font-medium">No Image Available</span>
+                </div>
+            }
+        </div>
+
+        <div class="lg:flex-1 w-full space-y-6">
+            <div>
+                <h1 class="text-4xl font-black text-gray-900 tracking-tight">
+                    {{product.name}}
+                </h1>
+                <p class="text-gray-500 text-xl font-semibold mt-1">{{product.brand}}</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="text-3xl font-bold text-primary">
+                    {{product.price | currency}}
+                </div>
+                @if (product.featured) {
+                    <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Best Seller
+                    </span>
+                }
+            </div>
+
+            <div>
+                @if (product.status === 'ACTIVE') {
+                    <div class="flex items-center text-green-600 font-bold">
+                        <span class="relative flex h-3 w-3 me-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                        </span>
+                        In Stock
+                    </div>
+                } @else {
+                    <div class="flex items-center text-red-500 font-bold">
+                        <span class="h-3 w-3 rounded-full bg-red-500 me-2"></span>
+                        Currently Unavailable
+                    </div>
+                }
+            </div>
+
+            <hr class="border-gray-100" />
+
+            <div class="grid grid-cols-2 gap-y-4 text-sm">
+                <div class="text-gray-400 font-bold uppercase tracking-tighter">Color</div>
+                <div class="flex items-center gap-2">
+                    <div class="h-5 w-5 rounded-full border shadow-inner" 
+                         [style.background-color]="product.productColor"></div>
+                    <span class="font-semibold text-gray-700 capitalize">{{product.productColor}}</span>
+                </div>
+
+                <div class="text-gray-400 font-bold uppercase tracking-tighter">Size</div>
+                <div>
+                    <span class="bg-gray-900 text-white px-3 py-1 rounded text-xs font-bold">
+                        {{product.size}}
+                    </span>
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">Description</h3>
+                <p class="text-gray-600 leading-relaxed">
+                    {{product.description}}
+                </p>
+            </div>
+
+            <!-- <button class="btn btn-primary w-full lg:w-3/4 h-14 text-lg font-bold rounded-xl" 
+                    [disabled]="product.status !== 'ACTIVE'"
+                    (click)="addToCart(product)">
+                <fa-icon [icon]="['fas', iconAddToCart]" class="me-2"></fa-icon>
+                {{labelAddToCart}}
+            </button> -->
+        </div>
     </div>
-
-
-    <div class="w-full lg:w-auto">
-        <h1 class="text-3xl font-bold "> {{productQuery.data().name}} - {{productQuery.data().size}}</h1>
-        @if(productQuery.data().nbInStock!>0){
-        <span class="text-green-500 text-lg"><span class="font-bold text-black me-2">{{productQuery.data().nbInStock}} </span>  In Stock</span>
-        }
-        @else {
-        <span class="text-red-500 text-lg">Out of Stock</span>
-        }
-
-        @if(productQuery.data().featured){
-        <div class="rounded-md border w-32 p-2 text-center border-black my-5">
-            Best Seller
-        </div>
-        }
-        <div class="text-2xl my-5">
-            <span class="line-through me-2">{{productQuery.data().price! + 200|currency}}</span>
-            <span class=" me-2">{{productQuery.data().price!|currency}}</span>
-        </div>
-
-        <div class="">Brand: <span class="font-bold">{{productQuery.data().brand}}</span></div>
-
-        <div class="flex items-center mt-1">
-            <div class="me-1 ">Color:</div>
-            <div class="h-5 w-5 rounded-full" [ngStyle]="{'background-color':productQuery.data().color}"></div>
-        </div>
-        <div class="">Size: <span class="font-bold">{{productQuery.data().size}}</span></div>
-        <div class="my-5 w-96">
-            <h2 class="text-xl font-bold">Description:</h2>
-            <p class="text-justify">{{productQuery.data().description}}</p>
-
-        </div>
-
-        <button class="btn btn-primary mt-5 w-full lg:w-64" [disabled]="productQuery.data().nbInStock !<= 0"
-        (click)="addToCart(productQuery.data()!)"
-        >
-
-            <fa-icon [icon]="['fas',iconAddToCart]" class="me-2"></fa-icon>
-            {{labelAddToCart}}
-        </button>
-    </div>
-</div>
-}@else if (productQuery.isPending()) {
-    <div class="w-full justify-center flex">
-        <span class="loading loading-spinner loading-lg"></span>
+} @else if (productQuery.isPending()) {
+    <div class="w-full h-screen flex justify-center items-center">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
     </div>
 }
-<div class="my-10">
-    <h2 class="text-2xl font-bold mb-7 ms-5 sm:ms-0">You may also like</h2>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:gid-cols-4 xl:grid-cols-5 gap-8 sm:gap-5 ">
-        @for(product of relatedProductsQuery.data()?.content!; track product.publicId){
-
-          <app-product-card [product]="product"></app-product-card>
+<div class="mt-20 px-6">
+    <h2 class="text-2xl font-black text-gray-900 mb-8">You may also like</h2>
+    <!-- <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+        @for(item of relatedProductsQuery.data()?.content; track item.id) {
+            <app-product-card [product]="item"></app-product-card>
         }
-    </div>
-
+    </div> -->
 </div>

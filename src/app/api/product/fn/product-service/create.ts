@@ -11,13 +11,16 @@ import { CreateProductRequestDto } from '../../models/create-product-request-dto
 import { ProductResponseDto } from '../../models/product-response-dto';
 
 export interface Create$Params {
-      body: CreateProductRequestDto
+      body?: {
+'product': CreateProductRequestDto;
+'files': Array<Blob>;
+}
 }
 
-export function create(http: HttpClient, rootUrl: string, params: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductResponseDto>> {
+export function create(http: HttpClient, rootUrl: string, params?: Create$Params, context?: HttpContext): Observable<StrictHttpResponse<ProductResponseDto>> {
   const rb = new RequestBuilder(rootUrl, create.PATH, 'post');
   if (params) {
-    rb.body(params.body, 'application/json');
+    rb.body(params.body, 'multipart/form-data');
   }
 
   return http.request(
