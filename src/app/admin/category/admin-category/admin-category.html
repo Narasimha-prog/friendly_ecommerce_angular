@@ -8,7 +8,7 @@
     </button>
 </div>
 <div class="border-t w-full border-solid border-gray-300 mt-3 mb-5">
-    @if(categoryQuery.isSuccess() && categoryQuery.data()!.content.length!==0){
+    @if(categoryQuery.isSuccess() && categoryQuery.data()){
     <div class="overflow-x-auto border border-gray-300  rounded-md">
         <table class="table table-lg table-zebra">
             <thead class="border-gray-300">
@@ -20,15 +20,15 @@
                 </tr>
             </thead>
             <tbody>
-                @for (category of categoryQuery.data()!.content; track category.publicId; let i = $index) {
+                @for (category of categoryQuery.data(); track category.id; let i = $index) {
                 <tr class="border-gray-300">
                     <td>{{i+1}}</td>
-                    <td class="text-sm">{{category.publicId}}</td>
+                    <td class="text-sm">{{category.id}}</td>
                     <td class="text-sm">{{category.name}}</td>
-                    <td class="btn btn-secondary btn-sm mt-3 me-2" *ngIf="category.publicId"
-                        (click)="editCategory(category.publicId)">Edit</td>
-                    <td class="btn btn-secondary btn-sm mt-3" *ngIf="category.publicId"
-                        (click)="deleteCategory(category.publicId)">Delete</td>
+                    <td class="btn btn-secondary btn-sm mt-3 me-2" *ngIf="category.id"
+                        (click)="editCategory(category.id)">Edit</td>
+                    <td class="btn btn-secondary btn-sm mt-3" *ngIf="category.id"
+                        (click)="deleteCategory(category.id)">Delete</td>
                 </tr>
                 }
             </tbody>
@@ -42,7 +42,7 @@
     <div class="alert alert-error">
         <span class="">Failed to Load Categories..</span>
     </div>
-    }@else if(categoryQuery.data()!.content.length===0){
+    }@else if(categoryQuery.data()){
     <div role="alert" class="alert alert-info">
         <fa-icon [icon]="['fas','circle-exclamation']" size="2x" ></fa-icon>
         <span class="">No Category Created Yet </span>

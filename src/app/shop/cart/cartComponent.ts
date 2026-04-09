@@ -2,7 +2,7 @@ import { Component, effect, inject, Injector, OnInit, PLATFORM_ID } from '@angul
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { CartService } from './cart-service';
 import { Toast } from '../../shared/model/toast/toast';
-import { CartItem, CartItemAdd, StripeSession } from '../../shared/model/cart.model';
+import { CartItem, CartItemAdd, RazorpaySessionId } from '../../shared/model/cart.model';
 import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
@@ -60,7 +60,7 @@ connectedUserQuery = this.authService.fetch();
   initPaymentSession=injectMutation(()=>(
     {
       mutationFn:(cart:Array<CartItemAdd>)=> lastValueFrom(this.cartService.initPaymentSession(cart)),
-      onSuccess:(result:StripeSession)=>this.razorpaySessionSuccess(result)
+      onSuccess:(result:RazorpayService)=>this.razorpaySessionSuccess(result)
     }
   ))
 
@@ -158,7 +158,7 @@ ngOnInit(): void {
 }
 
 
-     private razorpaySessionSuccess(session: StripeSession) {
+     private razorpaySessionSuccess(session: RazorpaySessionId) {
       if (!isPlatformBrowser(this.platformId)) {
       return;
     }

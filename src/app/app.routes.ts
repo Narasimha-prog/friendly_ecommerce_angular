@@ -74,7 +74,7 @@ export const appRoutes: Route[] = [
     {
          path:'products',
           component:ProductsComponent
-    }
+    },
    ,{
      path: 'cart',
      // 3. FIX: This is the most important one!

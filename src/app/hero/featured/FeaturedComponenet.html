@@ -2,7 +2,7 @@
   
    @if (featuredProductQuery.isSuccess()){
         
-    @for (product of featuredProductQuery.data().content; track product.publicId) {
+    @for (product of featuredProductQuery.data().content; track product.id) {
         
     <app-product-card [product]="product"></app-product-card>
     }

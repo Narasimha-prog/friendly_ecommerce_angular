@@ -10,7 +10,7 @@ import { firstValueFrom, interval, take } from 'rxjs';
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ProductCard } from "../../hero/product-card";
 import { App } from '../../app';
-import { CartService } from '../cart/cart-service';
+// import { CartService } from '../cart/cart-service';
 import { Product } from '../../admin/model/product.model';
 
 
@@ -32,7 +32,7 @@ export class ProductDetails {
 
   lastPublicId='';
 
-  cartService=inject(CartService);
+  // cartService=inject(CartService);
 
   pageRequest:Pagination={
     page:0,

@@ -7,7 +7,7 @@
 <div class="border-t w-full border-solid border-gray-300 mt-2 mb-5 ">
 
 </div>
-@if (orderQuery.isSuccess() && orderQuery.data().page.totalElements!==0) {
+@if (orderQuery.isSuccess() && orderQuery.data().totalElements!==0) {
 <div class="overflow-x-auto border border-gray-300 rounded-md">
     <table class="table table-lg table-zebra">
       <thead class="border-gray-300">
@@ -22,15 +22,15 @@
         </tr>
       </thead>
       <tbody>
-        @for(order of orderQuery.data().content!;track  order.publicId;let i=$index){
+        @for(order of orderQuery.data().content!;track  order.orderId;let i=$index){
          <tr class="border-t-2  border-gray-300 ">
             <th>{{i+1}}</th>
-             <td>{{computeItemName(order.orderedItems)}}</td>
+             <td>{{computeItemName(order.items)}}</td>
              <td>{{order.status}}</td>
-             <td>{{order.email}}</td>
-             <td>{{order.address}}</td>
-             <td>{{computeItemQuantity(order.orderedItems)}}</td>
-             <td>{{computeTotal(order.orderedItems) | currency}}</td>
+             <td>{{order.customerId}}</td>
+             <td>{{order.orderId}}</td>
+             <td>{{computeItemQuantity(order.items)}}</td>
+             <!-- <td>{{computeTotal(order.items) | currency}}</td> -->
         </tr>
         }
        
@@ -53,7 +53,7 @@
 }
 
   <button class="btn btn-outline"
-          [disabled]="pageRequest.page === (orderQuery.data().page.totalPages) - 1"
+          [disabled]="pageRequest.page === (orderQuery.data().totalPages!) - 1"
           (click)="nextPage()">
     Next
   </button>
@@ -65,7 +65,7 @@
     <div class="w-full justify-center flex">
         <span class="loading loading-spinner loading-lg"></span>
     </div>
-}@else if (orderQuery.data()?.page?.totalElements===0) {
+}@else if (orderQuery.data()?.totalElements===0) {
     <div class="alert alert-info">
      <fa-icon [icon]="['fas','circle-exclamation']"  size="2x" ></fa-icon>
      <span>No Orders created yet.</span>

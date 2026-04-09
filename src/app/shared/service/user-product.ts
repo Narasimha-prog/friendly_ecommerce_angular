@@ -5,9 +5,9 @@ import { ProductFilter } from '../../admin/model/product.model';
 import { Product, ProductCategory } from '../../admin/model/product.model';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { getAll, getById } from '../../api/product/functions';
+import { filter, getAll, getById, getFeaturedProducts, relatedProducts } from '../../api/product/functions';
 import { ProductApiConfiguration } from '../../api/product/product-api-configuration';
-import { CategoryResponseDto, ProductResponseDto } from '../../api/product/models';
+import { CategoryResponseDto, PageResponseProductResponseDto, ProductResponseDto } from '../../api/product/models';
 import { StrictHttpResponse } from '../../api/strict-http-response';
 
 
@@ -30,9 +30,11 @@ private productConfig=inject(ProductApiConfiguration);
 }
 
 
-  public findAllFeaturedProducts(pageRequest:Pagination):Observable<Page<Product>>{
-    const params=createPaginationOption(pageRequest);
-    return this.http.get<Page<Product>>(`${environment.apiUrl}/products-shop/featured`,{params});
+  public findAllFeaturedProducts(pageRequest:Pagination):Observable<PageResponseProductResponseDto>{
+   
+    return getFeaturedProducts(this.http,this.productConfig.rootUrl,pageRequest).pipe(
+      map((response:StrictHttpResponse<PageResponseProductResponseDto>) => response.body)
+    )
 
   }
 
@@ -42,22 +44,31 @@ map((response:StrictHttpResponse<ProductResponseDto>) => (response.body))
     )
   }
 
-  public findProductsRelatedToCategory(pageRequest:Pagination,publicId:string):Observable<Page<Product>>{
-    const params=createPaginationOption(pageRequest).append('publicId',publicId);
-    return this.http.get<Page<Product>>(`${environment.apiUrl}/products-shop/related`,{params});
+  public findProductsRelatedToCategory(pageRequest:Pagination,publicId:string):Observable<PageResponseProductResponseDto>{
+    
+    return relatedProducts(this.http,this.productConfig.rootUrl,{... pageRequest,publicId}).pipe(
+      map((response:StrictHttpResponse<PageResponseProductResponseDto>) => response.body)
+    )
+
 
   }
 
-public filter(pageRequest:Pagination,productFilter:ProductFilter):Observable<Page<Product>>{
-  let params = createPaginationOption(pageRequest);
+public filter(pageRequest:Pagination,productFilter:ProductFilter):Observable<PageResponseProductResponseDto>{
+  let categoryId: string='';
+  let productSizes: string[] | undefined;
+
   if (productFilter.category) {
-    params = params.append('categoryId', productFilter.category); // re-assigned
+    categoryId = productFilter.category;
   }
+
   if (productFilter.size) {
-    params = params.append('productSizes', productFilter.size);   // re-assigned
+  
+    productSizes = [productFilter.size];
   }
 
-  return this.http.get<Page<Product>>(`${environment.apiUrl}/products-shop/filter`,{params});
 
+  return filter(this.http,this.productConfig.rootUrl,{...pageRequest,categoryId,productSizes}).pipe(
+      map((response:StrictHttpResponse<PageResponseProductResponseDto>) => response.body)
+    );
 }
 }

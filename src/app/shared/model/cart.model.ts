@@ -21,6 +21,6 @@ export interface CartItem{
 }
 
 
-export interface StripeSession{
+export interface RazorpaySessionId{
     id:string
 }

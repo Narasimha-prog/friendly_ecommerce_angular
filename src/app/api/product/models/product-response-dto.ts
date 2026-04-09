@@ -13,7 +13,7 @@ export interface ProductResponseDto {
   name?: string;
   price?: number;
   productColor?: 'RED' | 'BLUE' | 'GREEN' | 'BLACK' | 'WHITE' | 'GREY' | 'YELLOW' | 'ORANGE';
-  size?: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
+  productSize?: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
   sku?: string;
   status?: 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK';
   updatedAt?: string;

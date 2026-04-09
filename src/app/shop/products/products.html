@@ -2,9 +2,9 @@
     <div class="ms-5 sm:ms-0">
         <app-filter-product [sort]="sort()!" [size]="size()!" (productFilter)="onFilterChange($event)"></app-filter-product>
     </div>
-    @if(filteredProductsQuery.isSuccess() && filteredProductsQuery.data().content.length!==0){
+    @if(filteredProductsQuery.isSuccess() && filteredProductsQuery.data().content){
    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-    @for(product of filteredProductsQuery.data().content;track product.publicId){
+    @for(product of filteredProductsQuery.data().content;track product.id){
 
         <app-product-card [product]="product"></app-product-card>
     }
@@ -14,7 +14,7 @@
        <span class="loading loading-spinner loading-lg"></span>
     </div>
     
-}@else if (filteredProductsQuery.isSuccess() && filteredProductsQuery.data().content.length===0) {
+}@else if (filteredProductsQuery.isSuccess() && filteredProductsQuery.data().content) {
     <div class="flex justify-center items-center flex-col">
      <div class="font-bold text-2xl">No Results</div>
      <div class="">Try to change your filters</div>

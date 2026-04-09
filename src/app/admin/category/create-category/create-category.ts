@@ -8,6 +8,7 @@ import { injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { AdminProductService } from '../../admin-product';
 import { NgxControlError } from 'ngxtension/control-error';
+import { CategoryRequestDto } from '../../../api/product/models';
 
 @Component({
   selector: 'app-create-category',
@@ -32,7 +33,7 @@ export class CreateCategory {
 
   createMutation=injectMutation(
     ()=>({
-      mutationFn: (categoryToCreate:ProductCategory)=>lastValueFrom(this.productService.createCategory(categoryToCreate)),
+      mutationFn: (categoryToCreate:CategoryRequestDto)=>lastValueFrom(this.productService.createCategory(categoryToCreate)),
       onSettled: () => this.onCreationSettled(),
       onSuccess: () => this.onCreationSuccess(),
       onError: (error) => this.onCreationError(error),
@@ -41,7 +42,7 @@ export class CreateCategory {
 
   create():void{
     
-    const categoryToCreate: ProductCategory = {
+    const categoryToCreate: CategoryRequestDto = {
 
       name: this.createCategoryForm.getRawValue().name
   }

@@ -132,8 +132,8 @@
      <select class="select select-bordered w-full" formControlName="category">
   <option disabled>Select size</option>
   @if(categoriesQuery.isSuccess()){
-    @for(category of categoriesQuery.data()!.content; track category){
-   <option [value]="category.publicId + '+' + category.name">
+    @for(category of categoriesQuery.data(); track category){
+   <option [value]="category.id + '+' + category.name">
   {{ category.name }}
 </option>
 

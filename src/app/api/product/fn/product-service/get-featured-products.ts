@@ -7,9 +7,9 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PageResponseOrderResponseDto } from '../../models/page-response-order-response-dto';
+import { PageResponseProductResponseDto } from '../../models/page-response-product-response-dto';
 
-export interface GetAllOrders$Params {
+export interface GetFeaturedProducts$Params {
 
 /**
  * Zero-based page index (0..N)
@@ -27,8 +27,8 @@ export interface GetAllOrders$Params {
   sort?: Array<string>;
 }
 
-export function getAllOrders(http: HttpClient, rootUrl: string, params?: GetAllOrders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseOrderResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, getAllOrders.PATH, 'get');
+export function getFeaturedProducts(http: HttpClient, rootUrl: string, params?: GetFeaturedProducts$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseProductResponseDto>> {
+  const rb = new RequestBuilder(rootUrl, getFeaturedProducts.PATH, 'get');
   if (params) {
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
@@ -40,9 +40,9 @@ export function getAllOrders(http: HttpClient, rootUrl: string, params?: GetAllO
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PageResponseOrderResponseDto>;
+      return r as StrictHttpResponse<PageResponseProductResponseDto>;
     })
   );
 }
 
-getAllOrders.PATH = '/api/v1/orders';
+getFeaturedProducts.PATH = '/api/v1/products/featured';

@@ -1,11 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { BehaviorSubject, map, Observable } from 'rxjs';
-import { Cart, CartItemAdd, StripeSession } from '../../shared/model/cart.model';
+import { Cart, CartItemAdd, RazorpaySessionId } from '../../shared/model/cart.model';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../../auth/local-storage';
+import { createPayment } from '../../api/payment/functions';
+import { PaymentApiConfiguration } from '../../api/payment/payment-api-configuration';
+import { PaymentCreateResponse } from '../../api/payment/models';
+import { StrictHttpResponse } from '../../api/strict-http-response';
 
 
 
@@ -14,12 +18,13 @@ import { LocalStorageService } from '../../auth/local-storage';
 })
 export class CartService {
 
-
+http=inject(HttpClient);
+paymentConfig=inject(PaymentApiConfiguration);
    
   routerService=inject(Router);
   localStorageService=inject(LocalStorageService);
   platformId=inject(PLATFORM_ID);
-  http=inject(HttpClient);
+  
 
 
   private keyCartStorage="cart";
@@ -119,9 +124,11 @@ getCartDetails():Observable<Cart>{
   }
 
 
-  initPaymentSession(cart:Array<CartItemAdd>): Observable<StripeSession>{
+  initPaymentSession(orderId:string): Observable<PaymentCreateResponse>{
 
-    return this.http.post<StripeSession>(`${environment.apiUrl}/orders/init-payment`,cart);
+    return createPayment(this.http,this.paymentConfig.rootUrl,{orderId}).pipe(
+        map((response: StrictHttpResponse<PaymentCreateResponse>)=> response.body)
+    )
   }
 
   storeSessionId(sessionId:string){

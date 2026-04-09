@@ -1,9 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { BaseProduct, Product, ProductCategory } from './model/product.model';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { createPaginationOption, Page, Pagination } from '../shared/model/request.model';
+import { create, create1, delete$, delete1, getAll, getAllProducts, update } from '../api/product/functions';
+import { ProductApiConfiguration } from '../api/product/product-api-configuration';
+import { CategoryRequestDto, CategoryResponseDto, CreateProductRequestDto, PageResponseProductResponseDto, ProductResponseDto, UpdateProductRequestDto } from '../api/product/models';
+import { StrictHttpResponse } from '../api/strict-http-response';
 
 @Injectable({
   providedIn: 'root'
@@ -12,56 +16,61 @@ export class AdminProductService {
 
   http = inject(HttpClient);
 
-
-  createCategory(category:ProductCategory): Observable<ProductCategory> {
-    return this.http.post<ProductCategory>(`${environment.apiUrl}/categories`, category);
+productConfig=inject(ProductApiConfiguration)
+  createCategory(category:CategoryRequestDto): Observable<CategoryResponseDto> {
+    return create1(this.http,this.productConfig.rootUrl,{body: category}).pipe(
+      map((response: StrictHttpResponse<CategoryResponseDto>) => response.body)
+    );
   }
 
-  deleteCategory(publicId: string): Observable<string> {
+  deleteCategory(id: string): Observable<void> {
 
-    const params=new HttpParams().set('publicId', publicId);
-
-    return this.http.delete<string>(`${environment.apiUrl}/categories`, {params});
+    return delete1(this.http,this.productConfig.rootUrl,{id}).pipe(
+      map((response: StrictHttpResponse<void>)=> response.body )
+    )
   }
 
-  findAllCategories(): Observable<Page<ProductCategory>> {
+  findAllCategories(): Observable<Array<CategoryResponseDto>> {
 
-    return this.http.get<Page<ProductCategory>>(`${environment.apiUrl}/categories`);
+    return getAll(this.http,this.productConfig.rootUrl).pipe(
+      map((response:StrictHttpResponse<Array<CategoryResponseDto>>) => response.body)
+    );
   }
 
 
-  createProduct(product: BaseProduct):Observable<Product> {
-    const formData = new FormData();
+  createProduct(product: CreateProductRequestDto,files:Array<Blob>):Observable<ProductResponseDto> {
+    
 
-    for(let i=0; i<product.pictures.length; i++) {
-      formData.append('pictures-'+i, product.pictures[i].file);
-    }
+    return create(this.http,this.productConfig.rootUrl,{body: {product,files}}).pipe(
+    map((response:StrictHttpResponse<ProductResponseDto>)=> response.body)
+   );
 
-    const clone =structuredClone(product);
-    clone.pictures=[];
-    formData.append('dto',JSON.stringify(clone));
-    return this.http.post<Product>(`${environment.apiUrl}/products`, formData);
 
 
 }
 
-deleteProduct(publicId:string):Observable<string>{
+   deleteProduct(publicId:string):Observable<void>{
   const params=new HttpParams().set('publicId', publicId);
 
-    return this.http.delete<string>(`${environment.apiUrl}/products`, {params});
+    return delete$(this.http,this.productConfig.rootUrl,{id:publicId}).pipe(
+      map((response:StrictHttpResponse<void>)=> response.body)
+    )
   }
 
-  editProduct(publicId:string):Observable<string>{
-  const params=new HttpParams().set('publicId', publicId);
+  editProduct(id:string,body:UpdateProductRequestDto):Observable<ProductResponseDto>{
 
-    return this.http.delete<string>(`${environment.apiUrl}/products`, {params});
+    return update(this.http,this.productConfig.rootUrl,{id,body}).pipe(
+      map((response:StrictHttpResponse<ProductResponseDto>)=>response.body)
+    )
   }
 
 
-  findAllProducts(pageRequest:Pagination): Observable<Page<Product>>{
-   const params= createPaginationOption(pageRequest);
+  findAllProducts(pageRequest:Pagination): Observable<PageResponseProductResponseDto>{
 
-   return this.http.get<Page<Product>>(`${environment.apiUrl}/products`,{params})
+
+   return getAllProducts(this.http,this.productConfig.rootUrl,pageRequest).pipe(
+    map((response:StrictHttpResponse<PageResponseProductResponseDto>)=> response.body)
+   );
 
   }
 }

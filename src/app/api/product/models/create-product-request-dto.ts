@@ -8,6 +8,7 @@ export interface CreateProductRequestDto {
   featured: boolean;
   name: string;
   price: number;
-  productSize?: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
+  productColor: string;
+  productSize: 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL';
   sku: string;
 }

@@ -2,6 +2,7 @@ import { Component, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../admin/model/product.model';
 import { RouterLink } from '@angular/router';
+import { ProductResponseDto } from '../api/product/models';
 
 @Component({
   selector: 'app-product-card',
@@ -11,7 +12,7 @@ import { RouterLink } from '@angular/router';
 })
 export class ProductCard {
 
-  product=input.required<Product>();
+  product=input.required<ProductResponseDto>();
 
 
 }

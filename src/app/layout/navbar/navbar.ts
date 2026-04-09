@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 import { UserProductService } from '../../shared/service/user-product';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { firstValueFrom } from 'rxjs';
-import { CartService } from '../../shop/cart/cart-service';
+// import { CartService } from '../../shop/cart/cart-service';
 import { AuthService } from '../../auth/authService';
 
 @Component({
@@ -23,20 +23,20 @@ export class Navbar implements OnInit{
   
   productService=inject(UserProductService);
 
-  cartService=inject(CartService);
+  // cartService=inject(CartService);
 
   ngOnInit(): void {
-   this.listenToCart();
+  //  this.listenToCart();
   }
 
   nbItemsInCart=0;
 
-  listenToCart() {
-    this.cartService.addedToCart.subscribe((productsInCart)=>{
-    this.nbItemsInCart=productsInCart.reduce((acc,product)=> acc+product.quantity,0);
+  // listenToCart() {
+  //   this.cartService.addedToCart.subscribe((productsInCart)=>{
+  //   this.nbItemsInCart=productsInCart.reduce((acc,product)=> acc+product.quantity,0);
     
-    })
-  }
+  //   })
+  // }
   
 
   closeMenu(menu: HTMLDetailsElement) {

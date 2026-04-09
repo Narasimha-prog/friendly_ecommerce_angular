@@ -1,9 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { createPaginationOption, Page, Pagination } from '../model/request.model';
-import { Observable } from 'rxjs';
-import { AdminOrderDetail, UserOrderDetail } from '../model/order.model';
-import { environment } from '../../../environments/environment';
+import { map, Observable } from 'rxjs';
+import { getAllOrders, getMyOrders } from '../../api/order/functions';
+import { OrderApiConfiguration } from '../../api/order/order-api-configuration';
+import { PageResponseOrderResponseDto } from '../../api/order/models';
+import { StrictHttpResponse } from '../../api/strict-http-response';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +14,20 @@ export class OrderService {
   
 
   http=inject(HttpClient);
+  orderConfig=inject(OrderApiConfiguration);
 
-  getOrderForConnectedUser(pageRequest:Pagination): Observable<Page<UserOrderDetail>>{
-       const params=  createPaginationOption(pageRequest);
+  getOrderForConnectedUser(pageRequest:Pagination): Observable<PageResponseOrderResponseDto>{
+       
 
-  return this.http.get<Page<UserOrderDetail>>(`${environment.apiUrl}/orders/user`,{params});
+  return getMyOrders(this.http,this.orderConfig.rootUrl,pageRequest).pipe(
+    map((response:StrictHttpResponse<PageResponseOrderResponseDto>) => response.body)
+  );
   }
 
-   getOrderForAdmin(pageRequest:Pagination): Observable<Page<AdminOrderDetail>>{
-       const params=  createPaginationOption(pageRequest);
+   getOrderForAdmin(pageRequest:Pagination): Observable<PageResponseOrderResponseDto>{
 
-  return this.http.get<Page<AdminOrderDetail>>(`${environment.apiUrl}/orders/admin`,{params});
+      return getAllOrders(this.http,this.orderConfig.rootUrl,pageRequest).pipe(
+        map((response:StrictHttpResponse<PageResponseOrderResponseDto>)=> response.body)
+      );
   }
 }

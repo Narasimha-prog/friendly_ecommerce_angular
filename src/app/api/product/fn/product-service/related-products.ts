@@ -7,9 +7,9 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PageResponseOrderResponseDto } from '../../models/page-response-order-response-dto';
+import { PageResponseProductResponseDto } from '../../models/page-response-product-response-dto';
 
-export interface GetAllOrders$Params {
+export interface RelatedProducts$Params {
 
 /**
  * Zero-based page index (0..N)
@@ -25,14 +25,16 @@ export interface GetAllOrders$Params {
  * Sorting criteria in the format: property,(asc|desc). Default sort order is ascending. Multiple sort criteria are supported.
  */
   sort?: Array<string>;
+  publicId: string;
 }
 
-export function getAllOrders(http: HttpClient, rootUrl: string, params?: GetAllOrders$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseOrderResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, getAllOrders.PATH, 'get');
+export function relatedProducts(http: HttpClient, rootUrl: string, params: RelatedProducts$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponseProductResponseDto>> {
+  const rb = new RequestBuilder(rootUrl, relatedProducts.PATH, 'get');
   if (params) {
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
     rb.query('sort', params.sort, {});
+    rb.query('publicId', params.publicId, {});
   }
 
   return http.request(
@@ -40,9 +42,9 @@ export function getAllOrders(http: HttpClient, rootUrl: string, params?: GetAllO
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PageResponseOrderResponseDto>;
+      return r as StrictHttpResponse<PageResponseProductResponseDto>;
     })
   );
 }
 
-getAllOrders.PATH = '/api/v1/orders';
+relatedProducts.PATH = '/api/v1/products/related';

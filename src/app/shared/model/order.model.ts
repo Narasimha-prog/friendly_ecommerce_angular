@@ -17,10 +17,10 @@ export interface UserOrderDetail{
 }
 
 
-export interface AdminOrderDetail{
-    publicId:string;
-    status:OrderStatus;
-    email:string;
-    address:string;
-    orderedItems:OrderedItems[];
-}
+// export interface AdminOrderDetail{
+//     publicId:string;
+//     status:OrderStatus;
+//     email:string;OrderedItems
+//     address:string;
+//     orderedItems:OrderedItems[];
+// }

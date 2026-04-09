@@ -13,7 +13,7 @@
     </div>
 </div>
 <div class="border-t w-full border-solid border-gray-300 mt-3 mb-5">
-    @if(productQuery.isSuccess() && productQuery.data()!.content.length!==0){
+    @if(productQuery.isSuccess() && productQuery.data()!.content){
     <div class="overflow-x-auto border border-gray-300  rounded-md">
         <table class="table table-lg table-zebra">
             <thead class="border-gray-300">
@@ -30,25 +30,25 @@
                 </tr>
             </thead>
             <tbody>
-                @for (product of productQuery.data()!.content; track product.publicId; let i = $index) {
+                @for (product of productQuery.data()!.content; track product.id; let i = $index) {
                 <tr class="border-gray-300">
                     <td>{{i+1}}</td>
                     <td class="text-sm max-w-20  overflow-ellipsis whitespace-nowrap overflow-hidden"
-                    [routerLink]="['/products', product.publicId]"
+                    [routerLink]="['/products', product.id]"
                     >
-                        {{product.publicId}}
+                        {{product.id}}
                     </td>
 
                     <td class="text-sm">{{product.brand}}</td>
                     <td class="text-sm">
-                        <div class="h-5 w-5 rounded-full" [ngStyle]="{'background-color':product.color}"></div>
+                        <div class="h-5 w-5 rounded-full" [ngStyle]="{'background-color':product.productColor}"></div>
                     </td>
                     <td class="text-sm">{{product.price}}</td>
-                    <td class="text-sm">{{product.nbInStock}}</td>
+                    <td class="text-sm">{{product.sku}}</td>
                     <td class="text-sm">{{product.featured ? 'Yes' : 'No'}}</td>
-                    <td class="text-sm">{{product.category.name || 'No Category'}}</td>
-                    <td class="btn btn-secondary btn-sm mt-3" *ngIf="product.publicId"
-                        (click)="deleteProduct(product.publicId)">Delete</td>
+                    <td class="text-sm">{{product.categoryName}}</td>
+                    <td class="btn btn-secondary btn-sm mt-3" *ngIf="product.id"
+                        (click)="deleteProduct(product.id)">Delete</td>
                 </tr>
                 }
             </tbody>
@@ -62,7 +62,7 @@
     <div class="alert alert-error">
         <span class="">Failed to Load Products..</span>
     </div>
-    }@else if(productQuery.data()!.content.length===0){
+    }@else if(productQuery.data()!.content){
     <div role="alert" class="alert alert-info">
         <fa-icon [icon]="['fas','circle-exclamation']" size="2x" ></fa-icon>
         <span class="">No Product  Created Yet </span>

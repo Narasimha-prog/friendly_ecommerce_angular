@@ -8,6 +8,7 @@ import { BaseProduct, CreateProductFormContent, ProductCategory, ProductPicture,
 import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { NgxControlError } from 'ngxtension/control-error';
+import { CreateProductRequestDto } from '../../../api/product/models';
 
 // --- Custom Validator for minimum array length ---
 function minArrayLength(min: number) {
@@ -39,14 +40,14 @@ export class CreateProductComponent {
   }));
 
   createMutation=injectMutation(()=>({
-    mutationFn: (product: BaseProduct) => lastValueFrom(this.productService.createProduct(product)),
+    mutationFn: (product: CreateProductRequestDto) => lastValueFrom(this.productService.createProduct(product,this.productPictures)),
     onSettled: () => this.onCreationSettled(),
     onSuccess: () => this.onCreationSuccess(),
     onError: (error: unknown) => this.onCreationError(error)
   }))
 
 
-  public productPictures=new Array<ProductPicture>();
+  public productPictures=new Array<Blob>();
 
 name=new FormControl<string>('',{nonNullable: true,validators:[Validators.required,Validators.minLength(3)]});
 
@@ -62,14 +63,16 @@ color=new FormControl<string>('',{nonNullable: true,validators:[Validators.requi
 
 featured=new FormControl<boolean>(false,{nonNullable: true,validators:[Validators.required]});
 
-pictures=new FormControl<ProductPicture[]>([],{nonNullable: true,validators:[Validators.required, minArrayLength(1)]});
+pictures=new FormControl<Blob[]>([],{nonNullable: true,validators:[Validators.required, minArrayLength(1)]});
 
 stock=new FormControl<number>(0,{nonNullable: true,validators:[Validators.required]});
 
 category=new FormControl<string>('',{nonNullable: true,validators:[Validators.required]});
 brand=new FormControl<string>('',{nonNullable: true,validators:[Validators.required, Validators.minLength(3)]});
+sku=new FormControl<string>('',{nonNullable:true,validators:[Validators.required]})
 
   public createForm=this.formBuilder.nonNullable.group<CreateProductFormContent>({
+    sku: this.sku,
      brand: this.brand,
     color: this.color,
     name: this.name,
@@ -104,20 +107,18 @@ brand=new FormControl<string>('',{nonNullable: true,validators:[Validators.requi
 
   create(): void{
 
-    const productToCreate:BaseProduct={
+    const productToCreate:CreateProductRequestDto={
+    sku:this.createForm.getRawValue().sku,
     brand: this.createForm.getRawValue().brand,
-    color: this.createForm.getRawValue().color,
+    productColor: this.createForm.getRawValue().color,
     name: this.createForm.getRawValue().name,
     description: this.createForm.getRawValue().description,
     price: this.createForm.getRawValue().price,
-    size: this.createForm.getRawValue().size,
+    productSize: this.createForm.getRawValue().size,
     featured: this.createForm.getRawValue().featured,
-    nbInStock: this.createForm.getRawValue().stock,
-    category: {
-      publicId: this.createForm.getRawValue().category.split('+')[0],
-      name: this.createForm.getRawValue().category.split('+')[1]
-    },
-    pictures: this.productPictures    
+    // nbInStock: this.createForm.getRawValue().stock,
+      categoryId: this.createForm.getRawValue().category.split('+')[0],
+
     
   };
 
@@ -153,14 +154,9 @@ private extractFileFromTarget(target: EventTarget | null): FileList | null {
         continue;
       }
 
-      validPictures.push({
-        file: picture,
-        mineType: picture.type || 'application/octet-stream'
-      });
     }
 
     // Update component and FormControl
-    this.productPictures = validPictures;
     this.pictures.setValue(this.productPictures);
     this.pictures.updateValueAndValidity();
   }

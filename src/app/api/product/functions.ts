@@ -11,6 +11,12 @@ export type { GetAllProducts$Params as GetAllProducts$Params } from './fn/produc
 export { getAllProducts as getAllProducts } from './fn/product-service/get-all-products';
 export type { Create$Params as Create$Params } from './fn/product-service/create';
 export { create as create } from './fn/product-service/create';
+export type { RelatedProducts$Params as RelatedProducts$Params } from './fn/product-service/related-products';
+export { relatedProducts as relatedProducts } from './fn/product-service/related-products';
+export type { Filter$Params as Filter$Params } from './fn/product-service/filter';
+export { filter as filter } from './fn/product-service/filter';
+export type { GetFeaturedProducts$Params as GetFeaturedProducts$Params } from './fn/product-service/get-featured-products';
+export { getFeaturedProducts as getFeaturedProducts } from './fn/product-service/get-featured-products';
 export type { GetById1$Params as GetById1$Params } from './fn/category-service/get-by-id-1';
 export { getById1 as getById1 } from './fn/category-service/get-by-id-1';
 export type { Update1$Params as Update1$Params } from './fn/category-service/update-1';
