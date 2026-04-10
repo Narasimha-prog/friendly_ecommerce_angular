@@ -16,10 +16,10 @@ export const serverRoutes: ServerRoute[] = [
     path: 'products/:publicId', // Product details with dynamic ID
     renderMode: RenderMode.Server,
   },
-  {
-    path: 'cart', // Cart page, depends on user session
-    renderMode: RenderMode.Server,
-  },
+  // {
+  //   path: 'cart', // Cart page, depends on user session
+  //   renderMode: RenderMode.Server,
+  // },
   {
     path: 'admin/products/list', // Admin pages
     renderMode: RenderMode.Server,

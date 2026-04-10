@@ -102,68 +102,68 @@ if(isPlatformBrowser(this.platformId)){
 }
 }
 
-getCartDetails():Observable<Cart>{
-  const cartFromLocalStorage=this.getCartFromLocalStorage();
-  const publicIdsForURL = cartFromLocalStorage.reduce((acc: string, item) => `${acc}${acc.length > 0 ? ',' : ''}${item.publicId}`, '');
-   return this.http.get<Cart>(`${environment.apiUrl}/orders/get-cart-details`,{params:{productIds:publicIdsForURL}})
-   .pipe(
-    map(cart=>this.mapToQuantity(cart,cartFromLocalStorage))
-   );
+// getCartDetails():Observable<Cart>{
+//   const cartFromLocalStorage=this.getCartFromLocalStorage();
+//   const publicIdsForURL = cartFromLocalStorage.reduce((acc: string, item) => `${acc}${acc.length > 0 ? ',' : ''}${item.publicId}`, '');
+//    return this.http.get<Cart>(`${environment.apiUrl}/orders/get-cart-details`,{params:{productIds:publicIdsForURL}})
+//    .pipe(
+//     map(cart=>this.mapToQuantity(cart,cartFromLocalStorage))
+//    );
 
 
 }
-  private mapToQuantity(cart: Cart, cartFromLocalStorage: CartItemAdd[]):Cart {
-     for(const cartItem of cartFromLocalStorage){
-      const foundProduct=cart.products.find(item=>item.publicId===cartItem.publicId);
+  // private mapToQuantity(cart: Cart, cartFromLocalStorage: CartItemAdd[]):Cart {
+  //    for(const cartItem of cartFromLocalStorage){
+  //     const foundProduct=cart.products.find(item=>item.publicId===cartItem.publicId);
 
-      if(foundProduct){
-        foundProduct.quantity=cartItem.quantity;
-      }
-     }
-     return cart;
-  }
+  //     if(foundProduct){
+  //       foundProduct.quantity=cartItem.quantity;
+  //     }
+  //    }
+  //    return cart;
+  // }
 
 
-  initPaymentSession(orderId:string): Observable<PaymentCreateResponse>{
+  // initPaymentSession(orderId:string): Observable<PaymentCreateResponse>{
 
-    return createPayment(this.http,this.paymentConfig.rootUrl,{orderId}).pipe(
-        map((response: StrictHttpResponse<PaymentCreateResponse>)=> response.body)
-    )
-  }
+  //   return createPayment(this.http,this.paymentConfig.rootUrl,{orderId}).pipe(
+  //       map((response: StrictHttpResponse<PaymentCreateResponse>)=> response.body)
+  //   )
+  // }
 
-  storeSessionId(sessionId:string){
+//   storeSessionId(sessionId:string){
 
-    if(isPlatformBrowser(this.platformId)){
-        localStorage.setItem(this.keySessionId,sessionId);
-    }
-  }
-  getSessionId():string{
+//     if(isPlatformBrowser(this.platformId)){
+//         localStorage.setItem(this.keySessionId,sessionId);
+//     }
+//   }
+//   getSessionId():string{
 
-    if(isPlatformBrowser(this.platformId)){
-       const sessionId= localStorage.getItem(this.keySessionId);
-       if(sessionId){
-              return sessionId;
-       }
+//     if(isPlatformBrowser(this.platformId)){
+//        const sessionId= localStorage.getItem(this.keySessionId);
+//        if(sessionId){
+//               return sessionId;
+//        }
       
-    }
-     return '';
-  }
+//     }
+//      return '';
+//   }
  
-  deleteSessionId():void{
-     if(isPlatformBrowser(this.platformId)){
-      localStorage.removeItem(this.keySessionId);
-     }
-  }
+//   deleteSessionId():void{
+//      if(isPlatformBrowser(this.platformId)){
+//       localStorage.removeItem(this.keySessionId);
+//      }
+//   }
 
-   clearCart() {
-     if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(this.keyCartStorage)
-      this.addedToCart$.next([]);
-     }
-  }
+//    clearCart() {
+//      if (isPlatformBrowser(this.platformId)) {
+//       localStorage.removeItem(this.keyCartStorage)
+//       this.addedToCart$.next([]);
+//      }
+//   }
 
   
-goToSuccess(orderId: string) {
-  this.routerService.navigate(['/cart/success'], { queryParams: { orderId } });
-}
-}
+// goToSuccess(orderId: string) {
+//   this.routerService.navigate(['/cart/success'], { queryParams: { orderId } });
+// }
+// }

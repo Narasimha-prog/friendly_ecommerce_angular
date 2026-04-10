@@ -43,41 +43,41 @@ isInitPaymentIsLoading=false;
 connectedUserQuery = this.authService.fetch();
 
 
-  constructor(){
-   this.extractListToUpdate();
-   this.checkUserLoggedIn();
-  }
+  // constructor(){
+  //  this.extractListToUpdate();
+  //  this.checkUserLoggedIn();
+  // }
 
-  cartQuery=injectQuery(
-    ()=>({
-      queryKey:['cart'],
-      queryFn:()=>lastValueFrom(this.cartService.getCartDetails())
-    }
+  // cartQuery=injectQuery(
+  //   ()=>({
+  //     queryKey:['cart'],
+  //     queryFn:()=>lastValueFrom(this.cartService.getCartDetails())
+  //   }
 
-    )
-  )
+  //   )
+  // )
 
-  initPaymentSession=injectMutation(()=>(
-    {
-      mutationFn:(cart:Array<CartItemAdd>)=> lastValueFrom(this.cartService.initPaymentSession(cart)),
-      onSuccess:(result:RazorpayService)=>this.razorpaySessionSuccess(result)
-    }
-  ))
+  // initPaymentSession=injectMutation(()=>(
+  //   {
+  //     mutationFn:(cart:Array<CartItemAdd>)=> lastValueFrom(this.cartService.initPaymentSession(cart)),
+  //     onSuccess:(result:RazorpayService)=>this.razorpaySessionSuccess(result)
+  //   }
+  // ))
 
 
 
-private extractListToUpdate(){
-  effect(()=>{
-    //  console.log('isLoading:', this.cartQuery.isLoading());
-    // console.log('isError:', this.cartQuery.isError());
-    // console.log('isSuccess:', this.cartQuery.isSuccess());
-    // console.log('data:', this.cartQuery.data());
-    if(this.cartQuery.isSuccess()){
-      this.cart=this.cartQuery.data().products;
-      // this.cart.forEach(v=>console.log("From loop",v));
-    }
-  });
-}
+// private extractListToUpdate(){
+//   effect(()=>{
+//     //  console.log('isLoading:', this.cartQuery.isLoading());
+//     // console.log('isError:', this.cartQuery.isError());
+//     // console.log('isSuccess:', this.cartQuery.isSuccess());
+//     // console.log('data:', this.cartQuery.data());
+//     if(this.cartQuery.isSuccess()){
+//       this.cart=this.cartQuery.data().products;
+//       // this.cart.forEach(v=>console.log("From loop",v));
+//     }
+//   });
+// }
 ngOnInit(): void {
   this.cartService.addedToCart.subscribe((cart) => {
     this.updateQuantity(cart);
@@ -137,67 +137,68 @@ ngOnInit(): void {
   
 
 
-  checkIfEmpty():boolean{
-    if(isPlatformBrowser(this.platformId)){
-      return this.cartQuery.isSuccess()&& this.cart.length===0;
-    }else{
-      return false;
-    }
-  }
+  // checkIfEmpty():boolean{
+  //   if(isPlatformBrowser(this.platformId)){
+  //     return this.cartQuery.isSuccess()&& this.cart.length===0;
+  //   }else{
+  //     return false;
+  //   }
+  // }
 
 
-  checkout() {
-     if(this.action==="Login"){
-      this.authService.logIn();
-     }else if(this.action==='Checkout'){
-        this.isInitPaymentIsLoading=true;
-       const cartItemsAdd= this.cart.map(item=>({publicId:item.publicId,quantity:item.quantity})as CartItemAdd)
-       this.initPaymentSession.mutate(cartItemsAdd);
+//   checkout() {
+//      if(this.action==="Login"){
+//       this.authService.logIn();
+//      }else if(this.action==='Checkout'){
+//         this.isInitPaymentIsLoading=true;
+//        const cartItemsAdd= this.cart.map(item=>({publicId:item.publicId,quantity:item.quantity})as CartItemAdd)
+//        this.initPaymentSession.mutate(cartItemsAdd);
        
-     }
-}
+//      }
+// }
 
 
-     private razorpaySessionSuccess(session: RazorpaySessionId) {
-      if (!isPlatformBrowser(this.platformId)) {
-      return;
-    }
-const razorpayService = this.injector.get(RazorpayService);
-    this.cartService.storeSessionId(session.id);
+//      private razorpaySessionSuccess(session: RazorpaySessionId) {
+//       if (!isPlatformBrowser(this.platformId)) {
+//       return;
+//     }
+// const razorpayService = this.injector.get(RazorpayService);
+//     this.cartService.storeSessionId(session.id);
 
-        const user = this.connectedUserQuery.data();  // data() is a function
+//         const user = this.connectedUserQuery.data();  // data() is a function
 
-  if (!user) {   
-    this.toastService.show('User not loaded yet', 'ERROR');
-    this.isInitPaymentIsLoading = false;
-    return;
-  }
-  razorpayService
-    .setKey(environment.razorpayKeyId)   // ✅ public key only
-    .setAmount(this.computeTotal() * 100) // Razorpay expects paise; computeTotal() gives rupees
-    .setCurrency('INR')
-    .setOrderId(session.id)              // ✅ order id from backend
-    .setPrefill({
-      name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
-      email: user.email ?? '',      // ✅ safe access
-      contact: '+917569208701',     // you can also pull from user if available
-    })
-    .onPaymentSuccess((res) => {
-      this.isInitPaymentIsLoading = false;
-      this.toastService.show(
-        `Payment success: ${res.razorpay_payment_id}`,
-        'SUCCESS'
-      );
-      this.cartService.goToSuccess(session.id);
-    })
-    .onPaymentError((err) => {
-      this.isInitPaymentIsLoading = false;
-      this.toastService.show(
-        `Payment failed: ${err?.description}`,
-        'ERROR'
-      );
-    })
-    .openPaymentGateway();
-}
+//   if (!user) {   
+//     this.toastService.show('User not loaded yet', 'ERROR');
+//     this.isInitPaymentIsLoading = false;
+//     return;
+//   }
+//   razorpayService
+//     .setKey(environment.razorpayKeyId)   // ✅ public key only
+//     .setAmount(this.computeTotal() * 100) // Razorpay expects paise; computeTotal() gives rupees
+//     .setCurrency('INR')
+//     .setOrderId(session.id)              // ✅ order id from backend
+//     .setPrefill({
+//       name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
+//       email: user.email ?? '',      // ✅ safe access
+//       contact: '+917569208701',     // you can also pull from user if available
+//     })
+//     .onPaymentSuccess((res) => {
+//       this.isInitPaymentIsLoading = false;
+//       this.toastService.show(
+//         `Payment success: ${res.razorpay_payment_id}`,
+//         'SUCCESS'
+//       );
+//       this.cartService.goToSuccess(session.id);
+//     })
+//     .onPaymentError((err) => {
+//       this.isInitPaymentIsLoading = false;
+//       this.toastService.show(
+//         `Payment failed: ${err?.description}`,
+//         'ERROR'
+//       );
+//     })
+//     .openPaymentGateway();
+// }
 
+// 
 }

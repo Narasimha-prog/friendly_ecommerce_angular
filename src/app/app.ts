@@ -27,7 +27,6 @@ platformId = inject(PLATFORM_ID);
 
 constructor(){
 if(isPlatformBrowser(this.platformId)){
-
   this.auth.fetch();
 }
 

@@ -13,14 +13,18 @@ import { ProductDetails } from '../../product-details/product-details';
   styleUrl: './filter-product.scss',
 })
 export class ProductsFilterComponent {
-  sort = input<string>('createdDate,asc');
+
+  sort = input<string>('createdAt,asc');
   size = input<string>();
 
   productFilter = output<ProductFilter>();
+
   formBuilder = inject(FormBuilder);
 
   constructor() {
-    effect(() => this.updateSizeFormValue());
+    effect(() => {this.updateSizeFormValue()
+      console.log("Trigger from Filter")
+    });
     effect(() => this.updateSortFormValue());
     this.formFilterProducts.valueChanges.subscribe(() =>
       this.onFilterChange(this.formFilterProducts.getRawValue())
@@ -50,12 +54,15 @@ export class ProductsFilterComponent {
   }
 
   private onFilterChange(filter: Partial<ProductFilterForm>) {
+
     const filterProduct: ProductFilter = {
       size: '',
-      sort: [`createdDate,${filter.sort}`],
+      sort: [`createdAt,${filter.sort}`],
     };
 
+
     let sizes: [string, boolean][] = [];
+
     if (filter.size !== undefined) {
       sizes = Object.entries(filter.size);
     }

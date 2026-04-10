@@ -19,6 +19,7 @@ import { ProductCard } from '../../hero/product-card';
   styleUrl: './products.scss',
 })
 export class ProductsComponent {
+  
 
   category = injectQueryParams('category');
   size = injectQueryParams('size');
@@ -32,7 +33,7 @@ export class ProductsComponent {
   pageRequest: Pagination = {
     page: 0,
     size: 20,
-    sort: ['createdDate,desc'],
+    sort: ['createdAt,desc'],
   };
 
 

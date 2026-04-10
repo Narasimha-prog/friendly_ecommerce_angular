@@ -9,8 +9,8 @@ import { ProductDetails } from './shop/product-details/product-details';
 import { roleCheckGuard } from './auth/role-check-guard';
 import { ProductCard } from './hero/product-card';
 import { ProductsComponent } from './shop/products/products';
-import { CartSuccessComponent } from './shop/cart-success/cart-success.componenet';
-import { UserOrder } from './user/user-order';
+// import { CartSuccessComponent } from './shop/cart-success/cart-success.componenet';
+// import { UserOrder } from './user/user-order';
 import { AdminOrders } from './admin/admin-orders/admin-orders';
 import { CategoryFilter } from './shop/shop-collection/category-filter';
 import { Login } from './auth/login/login';
@@ -75,19 +75,19 @@ export const appRoutes: Route[] = [
          path:'products',
           component:ProductsComponent
     },
-   ,{
-     path: 'cart',
-     // 3. FIX: This is the most important one!
-     loadComponent: () => import('./shop/cart/cartComponent').then(m => m.CartComponent)
-    },
-   {
-      path:'cart/success',
-      component:CartSuccessComponent
-   },
-   {
-      path:'users/orders',
-      component:UserOrder
-   },
+   // ,{
+   //   path: 'cart',
+   //   // 3. FIX: This is the most important one!
+   //   loadComponent: () => import('./shop/cart/cartComponent').then(m => m.CartComponent)
+   //  },
+   // {
+   //    path:'cart/success',
+   //    component:CartSuccessComponent
+   // },
+   // {
+   //    path:'users/orders',
+   //    component:UserOrder
+   // },
    {
       path:'users/login',
       component:Login

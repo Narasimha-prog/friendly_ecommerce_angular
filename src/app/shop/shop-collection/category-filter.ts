@@ -35,7 +35,7 @@ export class CategoryFilter{
   pageRequest: Pagination = {
     page: 0,
     size: 20,
-    sort: ['createdDate,desc'],
+    sort: ['createdAt,desc'],
   };
 
   // Filters
