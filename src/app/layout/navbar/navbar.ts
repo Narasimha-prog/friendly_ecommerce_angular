@@ -53,7 +53,7 @@ export class Navbar implements OnInit{
   }))
 
 
-  connectedUserQuery = this.authService.connectedUserQuery;
+  connectedUserQuery = this.authService.connectedUserQuery
 
 
   logIn():void { 
@@ -68,8 +68,6 @@ export class Navbar implements OnInit{
   }
 
   isConnected(): boolean {
-    console.log(this.connectedUserQuery.status()==='success'  &&  this.connectedUserQuery.data()?.email !== this.authService.notConnected)
-    console.log(this.connectedUserQuery.data()?.email)
     return this.connectedUserQuery.status() ==='success' &&  this.connectedUserQuery.data()?.email !== this.authService.notConnected;
   }
 

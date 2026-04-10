@@ -37,7 +37,7 @@
         </details>
       </div>
 
-      @if(connectedUserQuery.status()==='success' && authService.hasAnyAuthorities(connectedUserQuery.data()!,'ROLE_ADMIN')) {
+      @if(connectedUserQuery.status()==='success' && authService.hasAnyAuthorities(connectedUserQuery.data()!,'ADMIN')) {
         <div class="relative">
           <details #adminMenu class="group">
             <summary class="flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600 list-none">

@@ -11,7 +11,7 @@ import { AuthService } from './authService';
 
 export const roleCheckGuard: CanActivateFn = (
   next: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+
 ) => {
   const authService = inject(AuthService);
   const platformId = inject(PLATFORM_ID);

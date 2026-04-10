@@ -23,7 +23,7 @@ export const appRoutes: Route[] = [
          component: AdminCategory,
          canActivate: [roleCheckGuard],
          data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ADMIN'],
          }
     },
     {
@@ -32,7 +32,7 @@ export const appRoutes: Route[] = [
          component: CreateCategory,
          canActivate: [roleCheckGuard],
          data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ADMIN'],
          }
     },
     {
@@ -41,7 +41,7 @@ export const appRoutes: Route[] = [
          component: CreateProductComponent,
          canActivate: [roleCheckGuard],
          data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ADMIN'],
          }
     },
     {
@@ -50,7 +50,7 @@ export const appRoutes: Route[] = [
          component: AdminProductComponent,
          canActivate: [roleCheckGuard],
          data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ADMIN'],
          }
     },
     
@@ -98,7 +98,7 @@ export const appRoutes: Route[] = [
          component: AdminOrders,
          canActivate: [roleCheckGuard],
          data: {
-            authorities: ['ROLE_ADMIN'],
+            authorities: ['ADMIN'],
          }
     },
     

@@ -19,7 +19,6 @@ import {AuthService} from './auth/authService'
 export class App implements OnInit {
 
   private faIconLibrary = inject(FaIconLibrary);
-  private faConfig = inject(FaConfig);
   private auth = inject(AuthService);
 
 toastService = inject(Toast);
@@ -39,7 +38,6 @@ this.auth.connectedUserQuery= this.auth.fetch();
   }
   
    private initFontAwesome() {
-    this.faConfig.defaultPrefix = 'far';
     this.faIconLibrary.addIcons(...fontAwesomeIcons);
   }
  

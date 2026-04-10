@@ -104,7 +104,7 @@ private get router() {
       window.location.href = '/';
     }
   }
-hasAnyAuthorities(user: any, authorities: string[] | string): boolean {
+hasAnyAuthorities(user: UserResponseDto, authorities: string[] | string): boolean {
     if (!user || !user.roles || user.email === this.notConnected) return false;
     const authArray = Array.isArray(authorities) ? authorities : [authorities];
     return user.roles.some((role: string) => authArray.includes(role));

@@ -13,24 +13,25 @@
     </div>
 </div>
 <div class="border-t w-full border-solid border-gray-300 mt-3 mb-5">
-    @if(productQuery.isSuccess() && productQuery.data()!.content){
+    @if(productQuery.isSuccess() && productQuery.data().content){
     <div class="overflow-x-auto border border-gray-300  rounded-md">
         <table class="table table-lg table-zebra">
             <thead class="border-gray-300">
                 <tr class="border-gray-300">
                     <th>#</th>
+                    <th >id</th>
                     <th class="min-w-40">Name</th>
                     <th class="">Brand</th>
                     <th class="">Color</th>
                     <th class="">Price</th>
-                    <th class="">Nb in stock</th>
+                    <th class="">SKU</th>
                     <th class="">Featured</th>
                     <th class="">Category</th>
                     <th class="">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                @for (product of productQuery.data()!.content; track product.id; let i = $index) {
+                @for (product of productQuery.data().content; track product.id; let i = $index) {
                 <tr class="border-gray-300">
                     <td>{{i+1}}</td>
                     <td class="text-sm max-w-20  overflow-ellipsis whitespace-nowrap overflow-hidden"
