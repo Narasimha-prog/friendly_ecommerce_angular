@@ -4,10 +4,11 @@ import { BaseProduct, Product, ProductCategory } from './model/product.model';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { createPaginationOption, Page, Pagination } from '../shared/model/request.model';
-import { create, create1, delete$, delete1, getAll, getAllProducts, update } from '../api/product/functions';
+import { create, create1, delete$, delete1, getAll, getAllProducts, update, update1 } from '../api/product/functions';
 import { ProductApiConfiguration } from '../api/product/product-api-configuration';
 import { CategoryRequestDto, CategoryResponseDto, CreateProductRequestDto, PageResponseProductResponseDto, ProductResponseDto, UpdateProductRequestDto } from '../api/product/models';
 import { StrictHttpResponse } from '../api/strict-http-response';
+import { UserProductService } from '../shared/service/user-product';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +17,14 @@ export class AdminProductService {
 
   http = inject(HttpClient);
 
+
 productConfig=inject(ProductApiConfiguration)
   createCategory(category:CategoryRequestDto): Observable<CategoryResponseDto> {
     return create1(this.http,this.productConfig.rootUrl,{body: category}).pipe(
       map((response: StrictHttpResponse<CategoryResponseDto>) => response.body)
     );
   }
+
 
   deleteCategory(id: string): Observable<void> {
 
@@ -73,5 +76,7 @@ productConfig=inject(ProductApiConfiguration)
    );
 
   }
+
+ 
 }
 

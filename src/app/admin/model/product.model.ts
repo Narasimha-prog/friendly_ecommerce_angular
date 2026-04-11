@@ -50,7 +50,7 @@ export type CreateProductFormContent = {
   category: FormControl<string>;
   featured: FormControl<boolean>;
   pictures: FormControl<Blob[]>;
-  stock: FormControl<number>;
+  // stock: FormControl<number>;
 };
 
 export interface ProductFilter {

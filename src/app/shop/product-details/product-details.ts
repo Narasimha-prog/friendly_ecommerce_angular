@@ -52,46 +52,24 @@ export class ProductDetails {
 
    relatedProductsQuery=injectQuery(()=>(
     {
-      queryKey:['product',this.publicId,this.pageRequest],
-      queryFn:()=> firstValueFrom( this.productService.findProductsRelatedToCategory(this.pageRequest,this.publicId()!))
+      queryKey:['relatedProduct',this.publicId()],
+      queryFn:()=> firstValueFrom( this.productService.findProductsRelatedToCategory(this.pageRequest,this.publicId()!)),
+      enabled: !!this.productQuery.data()
     }
    ));
 
 constructor(){
-  effect(()=>{
-    this.handlePublicIdChange();
-  })
-  effect(()=>{
-   this.handleProductQueryError();
-  })
-  effect(()=>{
-    this.handleRelatedProductsQueryError();
-   })
+ effect(() => {
+      if (this.productQuery.isError()) {
+        this.toastService.show('Could not load product details', 'ERROR');
+      }
+      if (this.relatedProductsQuery.isError()) {
+        this.toastService.show('Could not load related products', 'ERROR');
+      }
+    });
 }
 
-   handlePublicIdChange(){
-    if(this.publicId()){
-      if(this.lastPublicId!=this.publicId() && this.lastPublicId!==''){
-       
-       this.relatedProductsQuery.refetch();
-       this.productQuery.refetch();
-      }
-      this.lastPublicId=this.publicId()!;
-    }
-   }
 
-   private handleProductQueryError(){
-    if (this.productQuery.isError()) {
-      this.toastService.show('Error while fetching product details, Please try again', 'ERROR');
-      
-    }
-   }
-
-   private handleRelatedProductsQueryError(){
-    if (this.relatedProductsQuery.isError()) {
-      this.toastService.show('Error while fetching products, Please try again', 'ERROR');
-    }
-   }
 
 
   //  addToCart(productToAdd:Product){

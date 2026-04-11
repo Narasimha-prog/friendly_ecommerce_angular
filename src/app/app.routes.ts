@@ -14,6 +14,7 @@ import { ProductsComponent } from './shop/products/products';
 import { AdminOrders } from './admin/admin-orders/admin-orders';
 import { CategoryFilter } from './shop/shop-collection/category-filter';
 import { Login } from './auth/login/login';
+import { UpdateProduct } from './admin/product/update-product/update-product';
 
 
 export const appRoutes: Route[] = [
@@ -40,6 +41,14 @@ export const appRoutes: Route[] = [
 
          component: CreateProductComponent,
          canActivate: [roleCheckGuard],
+         data: {
+            authorities: ['ADMIN'],
+         }
+    },
+    {
+       path: 'admin/products/update/:id',
+       component: UpdateProduct,
+        canActivate: [roleCheckGuard],
          data: {
             authorities: ['ADMIN'],
          }

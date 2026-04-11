@@ -1,51 +1,80 @@
-<div class="w-full flex justify-between items-center">
+<div class="w-full flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
     <div>
-        <h1 class="text-2xl font-bold">Categories</h1>
-        <div>Add and Delete Categories</div>
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Categories</h1>
+        <p class="text-slate-500 text-sm mt-1">Organize your products into logical groups.</p>
     </div>
-    <button class="btn btn-primary" routerLink="/admin/categories/create">
-        create Category
+    <button class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-sm transition-all" 
+            routerLink="/admin/categories/create">
+        + Create Category
     </button>
 </div>
-<div class="border-t w-full border-solid border-gray-300 mt-3 mb-5">
+
+<div class="w-full">
     @if(categoryQuery.isSuccess() && categoryQuery.data()){
-    <div class="overflow-x-auto border border-gray-300  rounded-md">
-        <table class="table table-lg table-zebra">
-            <thead class="border-gray-300">
-                <tr class="border-gray-300">
-                    <th class="">#</th>
-                    <th class="">Public Id</th>
-                    <th class="">Name</th>
-                    <th class="">Actions</th>
+    <div class="overflow-hidden bg-white border border-slate-200 rounded-xl shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 border-b border-slate-200">
+                <tr>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 w-16">#</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Category Name</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500">Public ID</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-slate-500 text-right">Actions</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-slate-200">
                 @for (category of categoryQuery.data(); track category.id; let i = $index) {
-                <tr class="border-gray-300">
-                    <td>{{i+1}}</td>
-                    <td class="text-sm">{{category.id}}</td>
-                    <td class="text-sm">{{category.name}}</td>
-                    <td class="btn btn-secondary btn-sm mt-3 me-2" *ngIf="category.id"
-                        (click)="editCategory(category.id)">Edit</td>
-                    <td class="btn btn-secondary btn-sm mt-3" *ngIf="category.id"
-                        (click)="deleteCategory(category.id)">Delete</td>
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-6 py-4 text-sm text-slate-400 font-mono">{{i + 1}}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-sm font-bold text-slate-900">{{category.name}}</span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-xs text-slate-400 font-mono uppercase">{{category.id}}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-4">
+                        @if (category.id) {
+                            <button class="text-sm font-semibold text-indigo-600 hover:text-indigo-900 transition-colors"
+                                    (click)="editCategory(category.id)">
+                                Edit
+                            </button>
+                            <button class="text-sm font-semibold text-red-600 hover:text-red-900 transition-colors"
+                                    (click)="deleteCategory(category.id)">
+                                Delete
+                            </button>
+                        }
+                    </td>
                 </tr>
                 }
             </tbody>
         </table>
     </div>
-   }@else if(categoryQuery.isPending()){
-    <div class="flex  w-full justify-center">
-        <span class="loading loading-spinner loading-lg"></span>
+    }
+
+    @else if(categoryQuery.isPending()){
+    <div class="flex flex-col items-center justify-center py-24 bg-white border border-slate-200 rounded-xl">
+        <div class="w-10 h-10 border-4 border-slate-200 border-t-indigo-600 rounded-full animate-spin"></div>
+        <p class="mt-4 text-slate-500 font-medium">Loading categories...</p>
     </div>
-    }@else if(categoryQuery.isError()){
-    <div class="alert alert-error">
-        <span class="">Failed to Load Categories..</span>
+    }
+
+    @else if(categoryQuery.isError()){
+    <div class="p-4 rounded-xl bg-red-50 border border-red-200 flex items-center justify-between">
+        <span class="text-sm font-medium text-red-700">Failed to load categories. Please try again.</span>
+        <button (click)="categoryQuery.refetch()" class="text-sm font-bold text-red-700 underline">Retry</button>
     </div>
-    }@else if(categoryQuery.data()){
-    <div role="alert" class="alert alert-info">
-        <fa-icon [icon]="['fas','circle-exclamation']" size="2x" ></fa-icon>
-        <span class="">No Category Created Yet </span>
+    }
+
+    @else {
+    <div class="flex flex-col items-center justify-center py-20 bg-slate-50 border-2 border-dashed border-slate-300 rounded-xl">
+        <div class="p-3 bg-white rounded-full shadow-sm mb-4 text-slate-400">
+            <fa-icon [icon]="['fas','folder-open']" size="2x"></fa-icon>
+        </div>
+        <h3 class="text-lg font-bold text-slate-900">No categories found</h3>
+        <p class="text-slate-500 mb-6 text-sm text-center">Organize your products by creating your first category.</p>
+        <button class="px-6 py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 shadow-sm transition-all"
+                routerLink="/admin/categories/create">
+            Create First Category
+        </button>
     </div>
     }
 </div>

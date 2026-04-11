@@ -1,0 +1,106 @@
+<div class="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-2xl font-bold text-gray-800">Update Product</h2>
+    <span class="text-xs font-mono bg-gray-200 px-2 py-1 rounded text-gray-600">ID: {{productId}}</span>
+  </div>
+
+  <hr class="mb-8 border-gray-300" />
+
+  @if (productQuery.isPending()) {
+    <div class="flex flex-col items-center justify-center py-20">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <p class="mt-4 text-gray-600 font-medium">Fetching product details...</p>
+    </div>
+  } 
+  
+  @else {
+    <form [formGroup]="updateForm" (ngSubmit)="onSubmit()" class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white p-8 rounded-xl shadow-md border border-gray-200">
+      
+      <div class="col-span-1 md:col-span-2 bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+        <label class="block text-sm font-semibold text-blue-700 uppercase tracking-wider">Stock Keeping Unit (SKU)</label>
+        <input type="text" 
+               class="w-full bg-transparent text-lg font-bold text-blue-900 border-none focus:ring-0 p-0 cursor-not-allowed" 
+               formControlName="sku" 
+               readonly />
+        <p class="text-xs text-blue-600 mt-1 italic">This identifier is fixed for inventory tracking.</p>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Product Name</label>
+        <input type="text" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300" 
+               formControlName="name" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Brand</label>
+        <input type="text" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300" 
+               formControlName="brand" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Price ($)</label>
+        <input type="number" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300" 
+               formControlName="price" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Category</label>
+        <select class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300 bg-white" 
+                formControlName="category">
+          <option value="" disabled>Select Category</option>
+          @for (cat of categoriesQuery.data(); track cat.id) {
+            <option [value]="cat.id">{{ cat.name }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Size</label>
+        <select class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300 bg-white" 
+                formControlName="size">
+          @for (s of sizes; track s) {
+            <option [value]="s">{{ s }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Product Color (Hex)</label>
+        <div class="flex items-center gap-3">
+          <input type="color" class="h-10 w-20 border border-gray-300 rounded cursor-pointer" 
+                 formControlName="color" />
+          <span class="font-mono text-gray-600 bg-gray-100 px-3 py-2 rounded-lg border border-gray-200 flex-1">
+            {{ updateForm.get('color')?.value }}
+          </span>
+        </div>
+      </div>
+
+      <div class="col-span-1 md:col-span-2 flex flex-col gap-1">
+        <label class="text-sm font-medium text-gray-700">Description</label>
+        <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none border-gray-300" 
+                  rows="4" formControlName="description"></textarea>
+      </div>
+
+      <div class="col-span-1 md:col-span-2 flex items-center gap-4 mt-4">
+        <button type="submit" 
+                class="px-6 py-2.5 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed transition-colors shadow-sm"
+                [disabled]="updateForm.invalid || updateMutation.isPending()">
+          @if (updateMutation.isPending()) {
+            <div class="flex items-center gap-2">
+              <div class="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              <span>Saving Changes...</span>
+            </div>
+          } @else {
+            Update Product
+          }
+        </button>
+        
+        <button type="button" 
+                (click)="onCancel()"
+                class="px-6 py-2.5 bg-white text-gray-700 font-semibold rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors">
+          Cancel
+        </button>
+      </div>
+    </form>
+  }
+</div>

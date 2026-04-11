@@ -65,7 +65,7 @@ featured=new FormControl<boolean>(false,{nonNullable: true,validators:[Validator
 
 pictures=new FormControl<Blob[]>([],{nonNullable: true,validators:[Validators.required, minArrayLength(1)]});
 
-stock=new FormControl<number>(0,{nonNullable: true,validators:[Validators.required]});
+// stock=new FormControl<number>(0,{nonNullable: true,validators:[Validators.required]});
 
 category=new FormControl<string>('',{nonNullable: true,validators:[Validators.required]});
 brand=new FormControl<string>('',{nonNullable: true,validators:[Validators.required, Validators.minLength(3)]});
@@ -80,7 +80,7 @@ sku=new FormControl<string>('',{nonNullable:true,validators:[Validators.required
     price: this.price,
     size: this.size,
     featured: this.featured,
-    stock: this.stock,
+    // stock: this.stock,
     category: this.category,
     pictures: this.pictures
   });
@@ -116,8 +116,7 @@ sku=new FormControl<string>('',{nonNullable:true,validators:[Validators.required
     price: this.createForm.getRawValue().price,
     productSize: this.createForm.getRawValue().size,
     featured: this.createForm.getRawValue().featured,
-    // nbInStock: this.createForm.getRawValue().stock,
-      categoryId: this.createForm.getRawValue().category.split('+')[0],
+    categoryId: this.createForm.getRawValue().category.split('+')[0],
 
     
   };
@@ -127,6 +126,7 @@ sku=new FormControl<string>('',{nonNullable:true,validators:[Validators.required
 }
 
 private extractFileFromTarget(target: EventTarget | null): FileList | null {
+
   const htmlInputElement = target as HTMLInputElement;
 
   if(target===null || htmlInputElement.files===null) {
@@ -137,12 +137,13 @@ private extractFileFromTarget(target: EventTarget | null): FileList | null {
 }
 
   onUploadNewPicture(target: EventTarget | null) {
+
     const pictureFiles = this.extractFileFromTarget(target);
     const MAX_SIZE_MB = 1;
 
     if (!pictureFiles) return;
 
-    const validPictures: ProductPicture[] = [];
+    const validPictures: Blob[] = [];
 
     for (let i = 0; i < pictureFiles.length; i++) {
       const picture = pictureFiles.item(i);
@@ -153,7 +154,7 @@ private extractFileFromTarget(target: EventTarget | null): FileList | null {
         this.toastService.show(`"${picture.name}" is too large. Max ${MAX_SIZE_MB}MB allowed.`, 'ERROR');
         continue;
       }
-
+        this.productPictures.push(picture);
     }
 
     // Update component and FormControl

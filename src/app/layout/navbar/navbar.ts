@@ -70,7 +70,10 @@ export class Navbar implements OnInit{
   isConnected(): boolean {
     return this.connectedUserQuery.status() ==='success' &&  this.connectedUserQuery.data()?.email !== this.authService.notConnected;
   }
-
+isAdmin = computed(() => {
+   const u = this.authService.connectedUserQuery.data();
+   return u ? this.authService.hasAnyAuthorities(u, 'ADMIN') : false;
+});
   closeDropDownMenu() {
     const bodyElement=document.activeElement as HTMLElement;
 

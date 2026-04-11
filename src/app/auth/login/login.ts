@@ -5,6 +5,7 @@ import { AuthService } from '../authService';
 import { AuthenticationResponseDto } from '../../api/auth/models';
 import { LocalStorageService } from '../local-storage';
 import { Router } from '@angular/router';
+import { injectQueryClient } from '@tanstack/angular-query-experimental';
 
 @Component({
   selector: 'app-login',
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
   styleUrl: './login.css',
 })
 export class Login {
-
+private queryClient = injectQueryClient()
 private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private localStorageService=inject(LocalStorageService);
@@ -42,6 +43,7 @@ private fb = inject(FormBuilder);
           }
 
           console.log('Login successful for user:', response.username);
+          this.queryClient.invalidateQueries({ queryKey: ['connected-user'] });
           // Redirect to home
           this.router.navigate(['/']);
 

@@ -1,39 +1,55 @@
-<div class="grid grid-cols-3">
-  <div></div>
-  <form id="createForm" (ngSubmit)="create()" [formGroup]="createCategoryForm" class="flex flex-col gap-3">
-    <h1 class="text-lg font-bold">Create new category</h1>
-
-    <label class="form-control w-full flex flex-col gap-2">
-      <div class="label">
-        <span class="label-text">Name</span>
+<div class="flex justify-center items-center py-10 px-4">
+  <div class="w-full max-w-md bg-white border border-slate-200 rounded-2xl shadow-sm p-8">
+    
+    <form [formGroup]="createCategoryForm" (ngSubmit)="create()" class="flex flex-col gap-6">
+      
+      <div class="text-center">
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">New Category</h1>
+        <p class="text-sm text-slate-500 mt-1">Add a new group for your products</p>
       </div>
-      <input type="text" placeholder="Type name here"
-        class="input input-bordered w-full"
-        formControlName="name"
-        [class.input-error]="name.invalid && !name.untouched"/>
 
-      <div class="label">
-        <span class="label-text-alt text-red-600" *ngxControlError="name; track: 'required'">
-          Name is required
-        </span>
-         <!-- Min length error -->
-  <span class="label-text-alt text-red-600" *ngxControlError="name; track: 'minlength'">
-    Name must be at least 3 characters long
-  </span>
+      <div class="flex flex-col gap-2">
+        <label for="name" class="text-sm font-semibold text-slate-700 ml-1">
+          Category Name
+        </label>
+        
+        <input 
+          id="name"
+          type="text" 
+          placeholder="e.g. Electronics, Footwear"
+          formControlName="name"
+          class="w-full px-4 py-3 rounded-xl border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+          [class.border-red-500]="name.invalid && !name.untouched"
+          [class.bg-red-50]="name.invalid && !name.untouched"
+        />
+
+        <div class="min-h-[20px] ml-1">
+          <span class="text-xs font-medium text-red-600" *ngxControlError="name; track: 'required'">
+            Name is required
+          </span>
+          <span class="text-xs font-medium text-red-600" *ngxControlError="name; track: 'minlength'">
+            Name must be at least 3 characters long
+          </span>
+        </div>
       </div>
-    </label>
 
-    <!-- Centered button -->
-    <button type="submit"
-      class="btn btn-primary btn-wide mt-3 mx-auto flex justify-center"
-      [class.btn-disabled]="loading || createCategoryForm.invalid"
-      [disabled]="createCategoryForm.invalid">
+      <div class="flex flex-col items-center gap-4">
+        <button 
+          type="submit"
+          class="w-full py-3 px-6 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-all flex justify-center items-center gap-2"
+          [disabled]="createCategoryForm.invalid || loading"
+        >
+          @if(loading) {
+            <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+          }
+          <span>{{ loading ? 'Saving...' : 'Create Category' }}</span>
+        </button>
 
-      @if(loading) {
-        <span class="loading loading-spinner"></span>
-      }
-      Create category
-    </button>
-  </form>
-  <div></div>
+        <a routerLink="/admin/categories" class="text-sm font-medium text-slate-500 hover:text-slate-800 transition-colors">
+          Cancel and go back
+        </a>
+      </div>
+
+    </form>
+  </div>
 </div>

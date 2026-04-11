@@ -33,7 +33,9 @@ export class AdminProductComponent {
 
 constructor(){
   effect(()=>{
-    this.handleProductQueryError();
+   if (this.productQuery.isError()) {
+    this.toastService.show('Error while fetching products, Please try again', 'ERROR');
+  }
   })
 }
 
@@ -51,14 +53,14 @@ constructor(){
  deleteProduct(productId: string) {
   this.deletionMutation.mutate(productId);
  }
+
+ updateProduct(productId:string){
+ this
+ }
  private onDeletionError(error: unknown){
   console.error('Error while deleting product:', error);
   this.toastService.show('issue while deleting product', 'ERROR');
  }  
 
- private handleProductQueryError(){
-  if (this.productQuery.isError()) {
-    this.toastService.show('Error while fetching products, Please try again', 'ERROR');
-  }
- }
+
 }

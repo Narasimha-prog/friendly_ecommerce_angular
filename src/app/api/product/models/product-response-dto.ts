@@ -3,7 +3,7 @@
 
 export interface ProductResponseDto {
   brand?: string;
-  categoryId?: string;
+  categoryId: string;
   categoryName?: string;
   createdAt?: string;
   description?: string;
