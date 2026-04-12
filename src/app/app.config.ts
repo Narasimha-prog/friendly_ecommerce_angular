@@ -15,6 +15,8 @@ import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/
 import { LocalStorageService } from './auth/local-storage';
 import { provideQueryClient, QueryClient } from '@tanstack/angular-query-experimental';
 import { authInterceptor } from './auth/auth-interceptor';
+import { provideAuthApiConfiguration } from './api/auth/auth-api-configuration';
+import { provideProductApiConfiguration } from './api/product/product-api-configuration';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,7 +31,10 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withFetch(),withInterceptors([authInterceptor])),
 
     provideQueryClient(new QueryClient()),
-     LocalStorageService
+     LocalStorageService,
+    //  provideAuthApiConfiguration('https://2948-2409-40f0-9-315-94d8-3c53-c0a0-a3dc.ngrok-free.app'),
+    // provideProductApiConfiguration('https://2948-2409-40f0-9-315-94d8-3c53-c0a0-a3dc.ngrok-free.app')
   ],
+
   
 };

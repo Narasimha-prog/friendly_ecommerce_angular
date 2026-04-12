@@ -15,6 +15,7 @@ import { AdminOrders } from './admin/admin-orders/admin-orders';
 import { CategoryFilter } from './shop/shop-collection/category-filter';
 import { Login } from './auth/login/login';
 import { UpdateProduct } from './admin/product/update-product/update-product';
+import { CartComponent } from './shop/cart/cartComponent';
 
 
 export const appRoutes: Route[] = [
@@ -84,11 +85,14 @@ export const appRoutes: Route[] = [
          path:'products',
           component:ProductsComponent
     },
-   // ,{
-   //   path: 'cart',
-   //   // 3. FIX: This is the most important one!
-   //   loadComponent: () => import('./shop/cart/cartComponent').then(m => m.CartComponent)
-   //  },
+   {
+     path: 'cart',
+     component: CartComponent,
+     canActivate: [roleCheckGuard],
+         data: {
+            authorities: ['USER'],
+         }
+    },
    // {
    //    path:'cart/success',
    //    component:CartSuccessComponent

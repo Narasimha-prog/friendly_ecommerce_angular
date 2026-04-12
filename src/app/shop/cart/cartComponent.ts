@@ -1,9 +1,9 @@
-import { Component, effect, inject, Injector, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, computed, effect, inject, Injector, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { CartService } from './cart-service';
 import { Toast } from '../../shared/model/toast/toast';
 import { CartItem, CartItemAdd, RazorpaySessionId } from '../../shared/model/cart.model';
-import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';
+import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { RazorpayService } from '@eduvidu/angular-razorpay';
@@ -17,188 +17,59 @@ import { AuthService } from '../../auth/authService';
   templateUrl: './cartComponent.html',
   styleUrl: './cartComponent.scss',
 })
-export class CartComponent implements OnInit{
-  
+export class CartComponent {
+  private cartService = inject(CartService);
+  public authService = inject(AuthService);
+  private toastService = inject(Toast);
+  private queryClient = inject(QueryClient); // Used to invalidate cache
 
-  platformId=inject(PLATFORM_ID);
+  // 1. Fetch Cart Data
+  cartQuery = injectQuery(() => ({
+    queryKey: ['cart'],
+    queryFn: () => lastValueFrom(this.cartService.getCartDetails()),
+  }));
 
-  cartService=inject(CartService);
+  // 2. Fetch User Data
+  connectedUserQuery = this.authService.fetch();
 
-  authService=inject(AuthService);
+  // 3. Define Mutations for Actions
+  // We use mutations because they "change" state on the server
+  addItemMutation = injectMutation(() => ({
+    mutationFn: (productId: string) => lastValueFrom(this.cartService.addToCart(productId, 1)),
+    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['cart'] })
+  }));
 
-  toastService=inject(Toast);
+  removeItemMutation = injectMutation(() => ({
+    mutationFn: (productId: string) => lastValueFrom(this.cartService.removeFromCart(productId)),
+    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['cart'] })
+  }));
 
- private injector = inject(Injector);
-  
-  cart: Array<CartItem>=[];
-
-  labelcheckout="Login to checkout";
-
-  action: 'Login'|'Checkout'='Login';
-
-isInitPaymentIsLoading=false;
-
-
-
-connectedUserQuery = this.authService.fetch();
-
-
-  // constructor(){
-  //  this.extractListToUpdate();
-  //  this.checkUserLoggedIn();
-  // }
-
-  // cartQuery=injectQuery(
-  //   ()=>({
-  //     queryKey:['cart'],
-  //     queryFn:()=>lastValueFrom(this.cartService.getCartDetails())
-  //   }
-
-  //   )
-  // )
-
-  // initPaymentSession=injectMutation(()=>(
-  //   {
-  //     mutationFn:(cart:Array<CartItemAdd>)=> lastValueFrom(this.cartService.initPaymentSession(cart)),
-  //     onSuccess:(result:RazorpayService)=>this.razorpaySessionSuccess(result)
-  //   }
-  // ))
-
-
-
-// private extractListToUpdate(){
-//   effect(()=>{
-//     //  console.log('isLoading:', this.cartQuery.isLoading());
-//     // console.log('isError:', this.cartQuery.isError());
-//     // console.log('isSuccess:', this.cartQuery.isSuccess());
-//     // console.log('data:', this.cartQuery.data());
-//     if(this.cartQuery.isSuccess()){
-//       this.cart=this.cartQuery.data().products;
-//       // this.cart.forEach(v=>console.log("From loop",v));
-//     }
-//   });
-// }
-ngOnInit(): void {
-  this.cartService.addedToCart.subscribe((cart) => {
-    this.updateQuantity(cart);
-    // console.log("From onInit ",cart);
+  // 4. Computed labels using TanStack Signals
+  actionLabel = computed(() => {
+    if (this.connectedUserQuery.isError()) return 'Login to checkout';
+    return 'Checkout';
   });
-}
 
-
-  private updateQuantity(cartUpdated:Array<CartItemAdd>){
-        for(const cartItemToUpdate of this.cart){
-          // console.log("From updateQuentity method",cartItemToUpdate)
-        const itemToUpdate=  cartUpdated.find((item)=>item.publicId===cartItemToUpdate.publicId);
-          if(itemToUpdate){
-            cartItemToUpdate.quantity=itemToUpdate.quantity;
-            // console.log(cartItemToUpdate)
-          }else{
-            this.cart.splice(this.cart.indexOf(cartItemToUpdate),1);
-          }
-        }
-  }
-  addQuentyToCart(publicId:string){
-    this.cartService.addToCart(publicId,'add');
-  }
-    removeQuentyToCart(publicId:string,quantity:number){
-      if(quantity>1){
-         this.cartService.addToCart(publicId,'remove');
-      }
-   
+  // 5. Action Methods
+  addQuantity(productId: string) {
+    this.addItemMutation.mutate(productId);
   }
 
-  removeItem(publicId:string){
-   const itemToRemoveIndex= this.cart.findIndex(item=>item.publicId===publicId)
-   if(itemToRemoveIndex){
-        this.cart.splice(itemToRemoveIndex,1);
-   }
-   this.cartService.removeFromCart(publicId);
-  }
-
-  computeTotal(){
-    return this.cart.reduce((acc,item)=>acc+item.price*item.quantity,0);
-  }
-  checkUserLoggedIn(){
-  effect(()=>{
-
-  if(this.connectedUserQuery?.isError()){
-  this.labelcheckout='Login to checkout';
-  this.action='Login';
-   }else if(this.connectedUserQuery?.isSuccess()){
-  this.labelcheckout='checkout';
-     this.action='Checkout';
+  removeQuantity(productId: string, currentQuantity: number) {
+    if (currentQuantity > 1) {
+      // Logic for decrementing (usually another backend call or quantity: -1)
+      this.addItemMutation.mutate(productId); 
     }
-
-  }
-  )
   }
 
-  
+  deleteItem(productId: string) {
+    this.removeItemMutation.mutate(productId);
+  }
+
+  computeTotal() {
+    const products = this.cartQuery.data()?.items ?? [];
+    return products.reduce((acc, item) => acc + (item.subTotal ?? 0), 0);
+  }
 
 
-  // checkIfEmpty():boolean{
-  //   if(isPlatformBrowser(this.platformId)){
-  //     return this.cartQuery.isSuccess()&& this.cart.length===0;
-  //   }else{
-  //     return false;
-  //   }
-  // }
-
-
-//   checkout() {
-//      if(this.action==="Login"){
-//       this.authService.logIn();
-//      }else if(this.action==='Checkout'){
-//         this.isInitPaymentIsLoading=true;
-//        const cartItemsAdd= this.cart.map(item=>({publicId:item.publicId,quantity:item.quantity})as CartItemAdd)
-//        this.initPaymentSession.mutate(cartItemsAdd);
-       
-//      }
-// }
-
-
-//      private razorpaySessionSuccess(session: RazorpaySessionId) {
-//       if (!isPlatformBrowser(this.platformId)) {
-//       return;
-//     }
-// const razorpayService = this.injector.get(RazorpayService);
-//     this.cartService.storeSessionId(session.id);
-
-//         const user = this.connectedUserQuery.data();  // data() is a function
-
-//   if (!user) {   
-//     this.toastService.show('User not loaded yet', 'ERROR');
-//     this.isInitPaymentIsLoading = false;
-//     return;
-//   }
-//   razorpayService
-//     .setKey(environment.razorpayKeyId)   // ✅ public key only
-//     .setAmount(this.computeTotal() * 100) // Razorpay expects paise; computeTotal() gives rupees
-//     .setCurrency('INR')
-//     .setOrderId(session.id)              // ✅ order id from backend
-//     .setPrefill({
-//       name: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
-//       email: user.email ?? '',      // ✅ safe access
-//       contact: '+917569208701',     // you can also pull from user if available
-//     })
-//     .onPaymentSuccess((res) => {
-//       this.isInitPaymentIsLoading = false;
-//       this.toastService.show(
-//         `Payment success: ${res.razorpay_payment_id}`,
-//         'SUCCESS'
-//       );
-//       this.cartService.goToSuccess(session.id);
-//     })
-//     .onPaymentError((err) => {
-//       this.isInitPaymentIsLoading = false;
-//       this.toastService.show(
-//         `Payment failed: ${err?.description}`,
-//         'ERROR'
-//       );
-//     })
-//     .openPaymentGateway();
-// }
-
-// 
 }

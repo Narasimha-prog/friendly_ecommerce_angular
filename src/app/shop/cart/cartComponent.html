@@ -1,66 +1,121 @@
-<!-- <div class="text-2xl mb-2">Shopping cart</div>
-<div class="flex flex-col lg:flex-row">
-    <div class="flex-grow me-5 w-full">
-      @if(cartQuery.isSuccess() && this.cart.length!==0){
-          @for(item of cart;track item.publicId)  {
-            <div class="border-t border-gray-200 "></div>
-            <div class="flex items-center justify-between">
-              <div class="p-4 flex">
-                <img [src]="'data:'+item.picture.mineType+';base64,'+item.picture.file" alt="{{item.name}}" width="110px"
-                  class="max-w-full lg:max-w-none me-5" />
-                <div class="w-40">
-                  <a [routerLink]="['/products',item.publicId]">{{item.name}}</a>
-                  <div class="text-sm">{{item.brand}}</div>
-                  <div class="font-bold">{{item.price|currency}}</div>
-                </div>
-              </div>
-              <div class="flex">
-                 <div class="w-32 flex justify-around items-center">
-                    <button 
-                    class="btn btn-sm btn-outline"
-                    (click)="removeQuentyToCart(item.publicId,item.quantity)"
-                    >-</button>
-                    <div class="">{{item.quantity}}</div>
-                     <button 
-                    class="btn btn-sm btn-outline"
-                    (click)="addQuentyToCart(item.publicId)"
-                    >+</button>
+<div class="p-6 max-w-7xl mx-auto">
+  <h1 class="text-3xl font-bold mb-6">Shopping Cart</h1>
 
-                 </div>
-                 <button class="ms-5 btn btn-outline btn-sm btn-error"
-                (click)="removeItem(item.publicId)">
-                 Remove
-                </button>
+  <div class="flex flex-col lg:flex-row gap-8">
+    
+    <div class="flex-grow">
+      
+      @if (cartQuery.isPending()) {
+        <div class="flex flex-col items-center justify-center py-20">
+          <span class="loading loading-spinner loading-lg text-primary"></span>
+          <p class="mt-4 text-gray-500">Fetching your cart...</p>
+        </div>
+      }
+
+      @else if (cartQuery.isError()) {
+        <div class="alert alert-error shadow-lg">
+          <span>Error loading cart. Please try again later.</span>
+          <button class="btn btn-sm" (click)="cartQuery.refetch()">Retry</button>
+        </div>
+      }
+
+      @else if (cartQuery.data()?.items?.length) {
+        <div class="space-y-4">
+          @for (item of cartQuery.data()?.items; track item.productId) {
+            <div class="card card-side bg-base-100 shadow-sm border border-base-200 overflow-hidden">
+              <figure class="w-32 h-32 flex-shrink-0">
+                <img [src]="item.imageUrl" [alt]="item.name" class="object-cover w-full h-full" />
+              </figure>
+              
+              <div class="card-body p-4 flex-row justify-between items-center w-full">
+                <div>
+                  <h2 class="card-title text-lg">
+                    <a [routerLink]="['/products', item.productId]" class="hover:text-primary transition-colors">
+                      {{ item.name }}
+                    </a>
+                  </h2>
+                  <p class="text-sm text-gray-500">Unit Price: {{ item.unitPrice | currency }}</p>
+                  <p class="font-bold text-primary mt-1">{{ item.subTotal | currency }}</p>
+                </div>
+
+                <div class="flex items-center gap-6">
+                  <div class="join border border-base-300">
+                    <button 
+                      class="btn btn-sm join-item btn-ghost"
+                      [disabled]="addItemMutation.isPending()"
+                      (click)="removeQuantity(item.productId!, item.quantity!)">
+                      -
+                    </button>
+                    <span class="px-4 py-1 bg-base-200 flex items-center font-medium">{{ item.quantity }}</span>
+                    <button 
+                      class="btn btn-sm join-item btn-ghost"
+                      [disabled]="addItemMutation.isPending()"
+                      (click)="addQuantity(item.productId!)">
+                      +
+                    </button>
+                  </div>
+
+                  <button 
+                    class="btn btn-circle btn-ghost btn-sm text-error"
+                    [disabled]="removeItemMutation.isPending()"
+                    (click)="deleteItem(item.productId!)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           }
-      }@else if (cartQuery.isPending()) {
-    <div class="w-full justify-center flex">
-        <span class="loading loading-spinner loading-lg"></span>
+        </div>
+      }
+
+      @else {
+        <div class="text-center py-20 bg-base-200 rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <h2 class="text-2xl font-bold">Your cart is empty</h2>
+          <p class="text-gray-500 mb-6">Looks like you haven't added anything to your cart yet.</p>
+          <a routerLink="/products" class="btn btn-primary">Start Shopping</a>
+        </div>
+      }
     </div>
-}@else if(checkIfEmpty()){
-       <div class="flex flex-col items-center justify-center h-60">
-        <div class="font-bold text-2xl ">No Items In cart</div>
-        <div>Add some items to your cart</div>
-       </div>
-}
-    </div>
-    <div class="bg-gray-100 border-gray-400 p-5 w-full lg:w-96 h-72 mt-6 lg:mt-0 rounded-md">
-      <div class="font-bold">Order Summary</div>
-      <div class="border-t border-gray-300 my-5"></div>
-      <div class="flex justify-between">
-           <div >Delivery</div>
-           <div>{{0 | currency}}</div>
+
+    <div class="w-full lg:w-96">
+      <div class="card bg-base-100 shadow-xl border border-base-200 sticky top-6">
+        <div class="card-body p-6">
+          <h2 class="card-title text-xl mb-4">Order Summary</h2>
+          
+          <div class="space-y-3">
+            <div class="flex justify-between">
+              <span class="text-gray-600">Subtotal</span>
+              <span>{{ computeTotal() | currency }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-gray-600">Shipping</span>
+              <span class="text-success font-medium">Free</span>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="flex justify-between text-xl font-bold">
+              <span>Total</span>
+              <span class="text-primary">{{ computeTotal() | currency }}</span>
+            </div>
+          </div>
+
+          <div class="card-actions mt-8">
+            <button 
+              class="btn btn-primary w-full"
+              [disabled]="!cartQuery.data()?.items?.length || addItemMutation.isPending()"
+              (click)="connectedUserQuery.isSuccess() ? null : authService.logIn()">
+              {{ actionLabel() }}
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="border-t border-gray-300 my-5"></div>
-      <div class="flex justify-between font-bold">
-            <div>Total</div>
-            <div>{{computeTotal() | currency}}</div>
-      </div>
-      <div class="border-t border-gray-300 my-5"></div>
-      <button class="btn btn-primary w-full"
-      [disabled]="cartQuery.isSuccess() && cartQuery.data().products.length===0"
-      (click)="checkout()"
-      >{{ labelcheckout }}</button>
     </div>
-</div> -->
+
+  </div>
+</div>

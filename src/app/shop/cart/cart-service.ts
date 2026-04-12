@@ -1,169 +1,69 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { Cart, CartItemAdd, RazorpaySessionId } from '../../shared/model/cart.model';
-import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../../environments/environment';
-import { Router } from '@angular/router';
-import { LocalStorageService } from '../../auth/local-storage';
-import { createPayment } from '../../api/payment/functions';
-import { PaymentApiConfiguration } from '../../api/payment/payment-api-configuration';
-import { PaymentCreateResponse } from '../../api/payment/models';
+import { inject, Injectable } from '@angular/core';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CartApiConfiguration } from '../../api/cart/cart-api-configuration';
+import { getCart, addItem, removeItem, clearCart } from '../../api/cart/functions';
+import { CartItemRequest, CartResponseDto } from '../../api/cart/models';
 import { StrictHttpResponse } from '../../api/strict-http-response';
-
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
+  private http = inject(HttpClient);
+  private cartConfig = inject(CartApiConfiguration);
 
-http=inject(HttpClient);
-paymentConfig=inject(PaymentApiConfiguration);
-   
-  routerService=inject(Router);
-  localStorageService=inject(LocalStorageService);
-  platformId=inject(PLATFORM_ID);
+
+  constructor() {
   
-
-
-  private keyCartStorage="cart";
-  private keySessionId="razorSessionId"
-
-  private addedToCart$=new BehaviorSubject<Array<CartItemAdd>>([]);
-
-
-addedToCart=this.addedToCart$.asObservable();
-
-constructor(){
-  const cartItems = this.getCartFromLocalStorage();
-  this.addedToCart$.next(cartItems);
-
-}
-
-
-private getCartFromLocalStorage(): Array<CartItemAdd> {
-  
-  if (isPlatformBrowser(this.platformId)) {
-    const cartProducts = localStorage.getItem(this.keyCartStorage);
-
-    if (cartProducts) {
-      return JSON.parse(cartProducts) as CartItemAdd[];
-    } else {
-      return [];
-    }
-
-  } else {
-    return [];
   }
-}
 
-addToCart(publicId:string,command:'add'|'remove'):void{
-      if(isPlatformBrowser(this.platformId)){
-        const itemTocart:CartItemAdd={publicId,quantity:1};
-         
-       const cartFromLocalStorage=this.getCartFromLocalStorage();
+  /**
+   * Refreshes the local state from the backend
+   */
+  getCartDetails(): Observable<CartResponseDto> {
+   return getCart(this.http, this.cartConfig.rootUrl)
+      .pipe(
+        map((res: StrictHttpResponse<CartResponseDto>) => res.body),
 
-       if(cartFromLocalStorage.length!==0){
-         const productsExisted=cartFromLocalStorage.find(item=>item.publicId === publicId);
-         if(productsExisted){
-          if(command==='add'){
-             productsExisted.quantity++;
-          }else if(command==='remove'){
-            productsExisted.quantity--;
-          }
-         }else{
-         cartFromLocalStorage.push(itemTocart)
-       }
-       }else{
-         cartFromLocalStorage.push(itemTocart)
-       }
+      )
+  }
 
-     localStorage.setItem(this.keyCartStorage,JSON.stringify(cartFromLocalStorage));
-     this.addedToCart$.next(cartFromLocalStorage);
-      
+  /**
+   * Adds an item to the backend cart
+   */
+  addToCart(productId: string, quantity: number = 1): Observable<CartResponseDto> {
+    const body: CartItemRequest = { productId, quantity };
+    
+   return addItem(this.http, this.cartConfig.rootUrl, { body })
+      .pipe(
+        map((res: StrictHttpResponse<CartResponseDto>) => res.body)
+      )
+    
+  }
 
-      }
+  /**
+   * Removes a specific product from the backend cart
+   */
+  removeFromCart(productId: string): Observable<CartResponseDto > {
+  return  removeItem(this.http, this.cartConfig.rootUrl, { productId })
+      .pipe(
+        map((res: StrictHttpResponse<CartResponseDto>) => res.body),
+    
+      )
+  }
 
-}
+  /**
+   * Clears the entire cart on the backend
+   */
+  clearCart(): Observable<void> {
+   return clearCart(this.http, this.cartConfig.rootUrl)
+      .pipe(
+        map((response:StrictHttpResponse<void>)=> response.body)
+      )
+  }
+
  
-removeFromCart(publicId:string):void{
-
-if(isPlatformBrowser(this.platformId)){
-   const cartFromLocalStorage=this.getCartFromLocalStorage();
-   const productExisit=cartFromLocalStorage.find(item=>item.publicId===publicId);
-
-   if(productExisit){
-    cartFromLocalStorage.splice(cartFromLocalStorage.indexOf(productExisit),1);
-    localStorage.setItem(this.keyCartStorage,JSON.stringify(cartFromLocalStorage));
-     this.addedToCart$.next(cartFromLocalStorage);
-      
-   }
-}
-}
-
-// getCartDetails():Observable<Cart>{
-//   const cartFromLocalStorage=this.getCartFromLocalStorage();
-//   const publicIdsForURL = cartFromLocalStorage.reduce((acc: string, item) => `${acc}${acc.length > 0 ? ',' : ''}${item.publicId}`, '');
-//    return this.http.get<Cart>(`${environment.apiUrl}/orders/get-cart-details`,{params:{productIds:publicIdsForURL}})
-//    .pipe(
-//     map(cart=>this.mapToQuantity(cart,cartFromLocalStorage))
-//    );
-
-
-}
-  // private mapToQuantity(cart: Cart, cartFromLocalStorage: CartItemAdd[]):Cart {
-  //    for(const cartItem of cartFromLocalStorage){
-  //     const foundProduct=cart.products.find(item=>item.publicId===cartItem.publicId);
-
-  //     if(foundProduct){
-  //       foundProduct.quantity=cartItem.quantity;
-  //     }
-  //    }
-  //    return cart;
-  // }
-
-
-  // initPaymentSession(orderId:string): Observable<PaymentCreateResponse>{
-
-  //   return createPayment(this.http,this.paymentConfig.rootUrl,{orderId}).pipe(
-  //       map((response: StrictHttpResponse<PaymentCreateResponse>)=> response.body)
-  //   )
-  // }
-
-//   storeSessionId(sessionId:string){
-
-//     if(isPlatformBrowser(this.platformId)){
-//         localStorage.setItem(this.keySessionId,sessionId);
-//     }
-//   }
-//   getSessionId():string{
-
-//     if(isPlatformBrowser(this.platformId)){
-//        const sessionId= localStorage.getItem(this.keySessionId);
-//        if(sessionId){
-//               return sessionId;
-//        }
-      
-//     }
-//      return '';
-//   }
  
-//   deleteSessionId():void{
-//      if(isPlatformBrowser(this.platformId)){
-//       localStorage.removeItem(this.keySessionId);
-//      }
-//   }
-
-//    clearCart() {
-//      if (isPlatformBrowser(this.platformId)) {
-//       localStorage.removeItem(this.keyCartStorage)
-//       this.addedToCart$.next([]);
-//      }
-//   }
-
-  
-// goToSuccess(orderId: string) {
-//   this.routerService.navigate(['/cart/success'], { queryParams: { orderId } });
-// }
-// }
+}

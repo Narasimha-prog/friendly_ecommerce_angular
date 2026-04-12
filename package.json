@@ -29,8 +29,9 @@
     "gen:payment": "ng-openapi-gen --config openapi-configs/payment.json",
 
     "gen:inventory": "ng-openapi-gen --config openapi-configs/inventory.json",
+    "gen:cart": "ng-openapi-gen --config openapi-configs/cart.json",
 
-    "gen:all": "npm run gen:auth && npm run gen:user && npm run gen:product && npm run gen:order && npm run gen:payment && npm run gen:inventory"
+    "gen:all": "npm run gen:auth && npm run gen:user && npm run gen:product && npm run gen:order && npm run gen:payment && npm run gen:inventory && npm run gen:cart"
 
   },
 

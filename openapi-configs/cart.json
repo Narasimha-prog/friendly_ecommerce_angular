@@ -1,0 +1,12 @@
+{
+  "input": "src/openapi/cart-service.json",
+  "output": "src/app/api/cart",
+  "generateServices": true,
+  "module": "CartApiModule",
+  "configuration": "CartApiConfiguration",
+  "defaultResponseType": "json",
+  "responseTypeMapping": {
+    "application/json": "json"
+  },
+  "strict": true
+}
