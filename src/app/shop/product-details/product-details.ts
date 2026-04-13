@@ -5,13 +5,11 @@ import { UserProductService } from '../../shared/service/user-product';
 import { Router } from '@angular/router';
 import { Toast } from '../../shared/model/toast/toast';
 import { Pagination } from '../../shared/model/request.model';
-import { injectQuery } from '@tanstack/angular-query-experimental';
-import { firstValueFrom, interval, take } from 'rxjs';
+import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
+import { firstValueFrom} from 'rxjs';
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ProductCard } from "../../hero/product-card";
-import { App } from '../../app';
-// import { CartService } from '../cart/cart-service';
-import { Product } from '../../admin/model/product.model';
+import { CartService } from '../cart/cart-service';
 
 
 @Component({
@@ -23,16 +21,13 @@ import { Product } from '../../admin/model/product.model';
 export class ProductDetails {
 
   publicId=injectParams('publicId');
-
   productService=inject(UserProductService);
-
   router=inject(Router);
-
   toastService = inject(Toast);
-
   lastPublicId='';
-
-  // cartService=inject(CartService);
+  cartService=inject(CartService);
+  
+  private queryClient = inject(QueryClient);
 
   pageRequest:Pagination={
     page:0,
@@ -40,8 +35,6 @@ export class ProductDetails {
     sort:[]
    }
 
-    labelAddToCart='Add to Cart'
-    iconAddToCart='shopping-cart'
 
    productQuery=injectQuery(()=>(
     {
@@ -71,20 +64,41 @@ constructor(){
 
 
 
+// 1. The Mutation (Defined at class level)
+  addToCartMutation = injectMutation(() => ({
+    mutationFn: (productId: string) => firstValueFrom(this.cartService.addToCart(productId, 1)),
+    onSuccess: () => {
+      this.toastService.show('Item added to cart!', 'SUCCESS');
+      // Sync the cart count globally
+      this.queryClient.invalidateQueries({ queryKey: ['cart'] });
+      
+      // Reset button label after a delay
+      setTimeout(() => {
+        this.addToCartMutation.reset();
+      }, 3000);
+    },
+    onError: () => {
+      this.toastService.show('Failed to add item', 'ERROR');
+    }
+  }));
 
-  //  addToCart(productToAdd:Product){
+  // 2. The Method (Called by HTML)
+  onAddToCart(productId: string) {
+    this.addToCartMutation.mutate(productId);
+  }
 
-  //   this.cartService.addToCart(productToAdd.publicId,'add');
-  //   this.labelAddToCart='Added to cart';
-  //   this.iconAddToCart='check';
+  // 3. Computed Helpers for the UI
+  get buttonLabel() {
+    if (this.addToCartMutation.isPending()) return 'Adding...';
+    if (this.addToCartMutation.isSuccess()) return 'Added to cart';
+    
+    return 'Add to Cart';
+  }
 
-  //   interval(3000).pipe(take(1)).subscribe(
-  //     ()=>{
-  //            this.labelAddToCart='Add to Cart'
-  //            this.iconAddToCart='shopping-cart'
-  //     }
-  //   );
-  //  }
+  get buttonIcon() {
+    if (this.addToCartMutation.isSuccess()) return 'check';
+    return 'shopping-cart';
+  }
   }
   
 

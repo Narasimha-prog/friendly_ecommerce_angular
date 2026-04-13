@@ -85,12 +85,12 @@
                 </p>
             </div>
 
-            <!-- <button class="btn btn-primary w-full lg:w-3/4 h-14 text-lg font-bold rounded-xl" 
+            <button class="btn btn-primary w-full lg:w-3/4 h-14 text-lg font-bold rounded-xl cursor-pointer" 
                     [disabled]="product.status !== 'ACTIVE'"
-                    (click)="addToCart(product)">
-                <fa-icon [icon]="['fas', iconAddToCart]" class="me-2"></fa-icon>
-                {{labelAddToCart}}
-            </button> -->
+                    (click)="onAddToCart(product.id!)">
+                <fa-icon [icon]="['fas', buttonIcon]" class="me-2"></fa-icon>
+                {{buttonLabel}}
+            </button>
         </div>
     </div>
 } @else if (productQuery.isPending()) {

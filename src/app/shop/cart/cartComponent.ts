@@ -58,7 +58,7 @@ export class CartComponent {
   removeQuantity(productId: string, currentQuantity: number) {
     if (currentQuantity > 1) {
       // Logic for decrementing (usually another backend call or quantity: -1)
-      this.addItemMutation.mutate(productId); 
+      this.removeItemMutation.mutate(productId); 
     }
   }
 

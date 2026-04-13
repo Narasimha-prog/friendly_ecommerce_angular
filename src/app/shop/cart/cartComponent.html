@@ -19,7 +19,7 @@
         </div>
       }
 
-      @else if (cartQuery.data()?.items?.length) {
+      @else if (cartQuery.data()?.items) {
         <div class="space-y-4">
           @for (item of cartQuery.data()?.items; track item.productId) {
             <div class="card card-side bg-base-100 shadow-sm border border-base-200 overflow-hidden">
