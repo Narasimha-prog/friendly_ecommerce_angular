@@ -10,6 +10,7 @@ import { firstValueFrom} from 'rxjs';
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ProductCard } from "../../hero/product-card";
 import { CartService } from '../cart/cart-service';
+import { InventoryService } from '../../shared/service/inventory-service';
 
 
 @Component({
@@ -26,6 +27,7 @@ export class ProductDetails {
   toastService = inject(Toast);
   lastPublicId='';
   cartService=inject(CartService);
+  inventoryService=inject(InventoryService)
   
   private queryClient = inject(QueryClient);
 
@@ -38,7 +40,7 @@ export class ProductDetails {
 
    productQuery=injectQuery(()=>(
     {
-      queryKey:['product',this.publicId],
+      queryKey:['product',this.publicId()],
       queryFn:()=> firstValueFrom( this.productService.findOneProduct(this.publicId()!))
     }
    ));
@@ -50,6 +52,12 @@ export class ProductDetails {
       enabled: !!this.productQuery.data()
     }
    ));
+
+   inventoryQuery=injectQuery(()=>({
+       queryKey: ["inventory",this.publicId()],
+       queryFn: ()=> firstValueFrom(this.inventoryService.getStock(this.publicId()!)),
+       enabled: !!this.productQuery.data()
+   }));
 
 constructor(){
  effect(() => {
