@@ -1,8 +1,8 @@
 import { Component, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Product } from '../admin/model/product.model';
+import { Product } from '../../admin/model/product.model';
 import { RouterLink } from '@angular/router';
-import { ProductResponseDto } from '../api/product/models';
+import { ProductResponseDto } from '../../api/product/models';
 
 @Component({
   selector: 'app-product-card',

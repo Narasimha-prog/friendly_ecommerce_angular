@@ -1,15 +1,15 @@
 import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserProductService } from '../../shared/service/user-product';
+import { UserProductService } from '../../user/servises/user-product';
 import { firstValueFrom } from 'rxjs';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { Pagination } from '../../shared/model/request.model';
 import { Router, RouterLink } from '@angular/router';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
-import { Toast } from '../../shared/model/toast/toast';
+import { Toast } from '../../shared/toast/toast';
 import { ProductFilter } from '../../admin/model/product.model';
 import { ProductsFilterComponent } from '../products/filter-product/filter-product';
-import { ProductCard } from '../../hero/product-card';
+import { ProductCard } from '../../hero/product-card/product-card';
 
 @Component({
   selector: 'app-category-filter',

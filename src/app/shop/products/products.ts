@@ -2,15 +2,15 @@ import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { injectQueryParams } from 'ngxtension/inject-query-params';
 
-import { UserProductService } from '../../shared/service/user-product';
+import { UserProductService } from '../../user/servises/user-product';
 import { Router } from '@angular/router';
-import { Toast } from '../../shared/model/toast/toast';
+import { Toast } from '../../shared/toast/toast';
 import { firstValueFrom } from 'rxjs';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { ProductsFilterComponent } from './filter-product/filter-product';
 import { Pagination } from '../../shared/model/request.model';
 import { ProductFilter } from '../../admin/model/product.model';
-import { ProductCard } from '../../hero/product-card';
+import { ProductCard } from '../../hero/product-card/product-card';
 
 @Component({
   selector: 'app-products',

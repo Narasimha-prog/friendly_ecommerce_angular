@@ -5,7 +5,7 @@ import { fontAwesomeIcons } from './shared/font-awsome-icons';
 import { Navbar } from './layout/navbar/navbar';
 import { Footer } from "./layout/footer/footer";
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Toast} from './shared/model/toast/toast';
+import { Toast} from './shared/toast/toast';
 import {AuthService} from './auth/authService'
 
 

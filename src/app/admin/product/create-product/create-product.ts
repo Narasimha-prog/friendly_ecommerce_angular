@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl, FormBuilder, FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { AdminProductService } from '../../admin-product';
-import { Toast } from '../../../shared/model/toast/toast';
+import { AdminProductService } from '../../servises/admin-product';
+import { Toast } from '../../../shared/toast/toast';
 import { Router } from '@angular/router';
 import { BaseProduct, CreateProductFormContent, ProductCategory, ProductPicture, ProductSizes ,sizes} from '../../model/product.model';
 import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';

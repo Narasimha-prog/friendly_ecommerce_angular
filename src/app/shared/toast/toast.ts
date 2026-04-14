@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AlertType, ToastInfo } from './toast-info.model';
+import { AlertType, ToastInfo } from '../model/toast-info.model';
 import { delay, of } from 'rxjs';
 
 @Injectable({

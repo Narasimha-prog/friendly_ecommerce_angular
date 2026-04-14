@@ -1,13 +1,11 @@
 import { Component, computed, effect, inject, Injector, OnInit, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { CartService } from './cart-service';
-import { Toast } from '../../shared/model/toast/toast';
-import { CartItem, CartItemAdd, RazorpaySessionId } from '../../shared/model/cart.model';
+import { Toast } from '../../shared/toast/toast';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { RazorpayService } from '@eduvidu/angular-razorpay';
-import { environment } from '../../../environments/environment';
 import { AuthService } from '../../auth/authService';
 
 @Component({

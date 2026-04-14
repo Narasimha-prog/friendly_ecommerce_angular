@@ -1,8 +1,8 @@
 import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { AdminProductService } from '../../admin-product';
-import { Toast } from '../../../shared/model/toast/toast';
+import { AdminProductService } from '../../servises/admin-product';
+import { Toast } from '../../../shared/toast/toast';
 import { injectMutation, injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';

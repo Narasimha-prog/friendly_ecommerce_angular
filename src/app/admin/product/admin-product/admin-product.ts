@@ -1,7 +1,7 @@
 import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AdminProductService } from '../../admin-product';
-import { Toast } from '../../../shared/model/toast/toast';
+import { AdminProductService } from '../../servises/admin-product';
+import { Toast } from '../../../shared/toast/toast';
 import { injectMutation, injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
 import { Pagination } from '../../../shared/model/request.model';
 import { lastValueFrom } from 'rxjs';

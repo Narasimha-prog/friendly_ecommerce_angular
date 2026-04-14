@@ -1,16 +1,16 @@
 import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { injectParams } from 'ngxtension/inject-params'
-import { UserProductService } from '../../shared/service/user-product';
+import { UserProductService } from '../../user/servises/user-product';
 import { Router } from '@angular/router';
-import { Toast } from '../../shared/model/toast/toast';
+import { Toast } from '../../shared/toast/toast';
 import { Pagination } from '../../shared/model/request.model';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom} from 'rxjs';
 import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ProductCard } from "../../hero/product-card";
+import { ProductCard } from "../../hero/product-card/product-card";
 import { CartService } from '../cart/cart-service';
-import { InventoryService } from '../../shared/service/inventory-service';
+import { InventoryService } from '../../user/servises/inventory-service';
 
 
 @Component({

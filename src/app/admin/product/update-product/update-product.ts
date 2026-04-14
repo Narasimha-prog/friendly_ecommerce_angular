@@ -1,11 +1,11 @@
 import { Component, effect, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AdminProductService } from '../../admin-product';
+import { AdminProductService } from '../../servises/admin-product';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Toast } from '../../../shared/model/toast/toast';
+import { Toast } from '../../../shared/toast/toast';
 import { injectMutation, injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { UserProductService } from '../../../shared/service/user-product';
+import { UserProductService } from '../../../user/servises/user-product';
 import { CreateProductRequestDto, UpdateProductRequestDto } from '../../../api/product/models';
 
 @Component({

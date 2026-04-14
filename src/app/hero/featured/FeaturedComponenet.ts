@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UserProductService } from '../../shared/service/user-product';
+import { UserProductService } from '../../user/servises/user-product';
 import { Pagination } from '../../shared/model/request.model';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
-import { ProductCard } from '../product-card';
+import { ProductCard } from '../product-card/product-card';
 
 @Component({
   selector: 'app-featured-component',

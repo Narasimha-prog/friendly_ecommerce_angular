@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { createPaginationOption, Page, Pagination } from '../model/request.model';
+import { createPaginationOption, Page, Pagination } from '../../shared/model/request.model';
 import { map, Observable } from 'rxjs';
 import { getAllOrders, getMyOrders } from '../../api/order/functions';
 import { OrderApiConfiguration } from '../../api/order/order-api-configuration';

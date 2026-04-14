@@ -3,11 +3,10 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Pagination } from '../../shared/model/request.model';
 import { injectQuery } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { OrderService } from '../../shared/service/order-service';
+import { OrderService } from '../../user/servises/order-service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { OrderedItems } from '../../shared/model/order.model';
 import { OrderItemDto } from '../../api/order/models';
-import { UserProductService } from '../../shared/service/user-product';
+import { UserProductService } from '../../user/servises/user-product';
 
 @Component({
   selector: 'app-admin-orders',
