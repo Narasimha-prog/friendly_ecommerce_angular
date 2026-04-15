@@ -41,6 +41,16 @@ private fb = inject(FormBuilder);
           if (response.refresh_token) {
             this.localStorageService.setItem('refresh_token', response.refresh_token);
           }
+        
+
+          if (response.expires_in) {
+            const expireAt = Date.now() + (response.expires_in * 1000);
+            this.localStorageService.setItem('token_expire', expireAt.toString());
+          }
+
+          if (response.username) {
+            this.localStorageService.setItem('email', response.username);
+          }
 
           console.log('Login successful for user:', response.username);
           this.queryClient.invalidateQueries({ queryKey: ['connected-user'] });
@@ -58,4 +68,6 @@ private fb = inject(FormBuilder);
       });
     }
   }
+
+  
 }

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CartApiConfiguration } from '../../api/cart/cart-api-configuration';
-import { getCart, addItem, removeItem, clearCart } from '../../api/cart/functions';
+import { getCart, addItem, removeItem, clearCart, incrementItem, decrementItem } from '../../api/cart/functions';
 import { CartItemRequest, CartResponseDto } from '../../api/cart/models';
 import { StrictHttpResponse } from '../../api/strict-http-response';
 
@@ -64,6 +64,16 @@ export class CartService {
       )
   }
 
- 
+ increment(productId:string): Observable<CartResponseDto>{
+  return incrementItem(this.http,this.cartConfig.rootUrl,{productId}).pipe(
+     map((response:StrictHttpResponse<CartResponseDto>)=> response.body)
+  )
+ }
+
+  decrement(productId:string): Observable<CartResponseDto>{
+  return decrementItem(this.http,this.cartConfig.rootUrl,{productId}).pipe(
+     map((response:StrictHttpResponse<CartResponseDto>)=> response.body)
+  )
+ }
  
 }

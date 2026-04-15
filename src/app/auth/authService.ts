@@ -1,116 +1,139 @@
-import { inject, Injectable, Injector, PLATFORM_ID } from '@angular/core';
-import { AuthApiConfiguration } from '../api/auth/auth-api-configuration';
-import { LocalStorageService } from './local-storage';
+import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { login, refresh } from '../api/auth/functions';
-import { UserRequestDto, UserResponseDto } from '../api/user/models';
-import { createUser, getUserByEmail, getUserById } from '../api/user/functions';
-import { UserApiConfiguration } from '../api/user/user-api-configuration';
-import { injectQuery } from '@tanstack/angular-query-experimental';
+import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { firstValueFrom, map, Observable, of } from 'rxjs';
-import { Router } from '@angular/router';
-import { jwtDecode } from 'jwt-decode';
-import { AuthenticationResponseDto } from '../api/auth/models';
 
-@Injectable({
-  providedIn: 'root',
-})
+import { injectQuery, injectQueryClient } from '@tanstack/angular-query-experimental';
+
+import { AuthApiConfiguration } from '../api/auth/auth-api-configuration';
+import { UserApiConfiguration } from '../api/user/user-api-configuration';
+import { LocalStorageService } from './local-storage';
+
+import { login, refresh } from '../api/auth/functions';
+import { getUserByEmail } from '../api/user/functions';
+import { UserResponseDto } from '../api/user/models';
+import { AuthenticationResponseDto, RefreshTokenRequestDto } from '../api/auth/models';
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-
-
-private http = inject(HttpClient);
- private authConfig = inject(AuthApiConfiguration);
- private userConfig=inject(UserApiConfiguration);
- private localStorageService=inject(LocalStorageService);
- private platformId=inject(PLATFORM_ID);
-private injector = inject(Injector);
-public notConnected = 'ANONYMOUS_USER';
-
-
-private readonly guestUser: UserResponseDto = {
-  email: this.notConnected, // 'ANONYMOUS_USER'
-  firstName: 'Guest',
-  lastName: '',
-  roles: [] // Empty array means they can't see Admin/Seller menus
-};
-
- logIn(credentials?: any) : Observable<AuthenticationResponseDto | null>{
-    if (!credentials) {
-      this.router.navigate(['/users/login']);
-      return of(null);
-    }
-    return login(this.http, this.authConfig.rootUrl, { body: credentials }).pipe(
-    // 2. We use map to "Unpack" the Box and just return the Letter (body)
-    map(response => response.body as AuthenticationResponseDto)
-  );
-
-  }
-
- fetch() {
-    return this.connectedUserQuery;
-
-  }
-private get router() {
-    return this.injector.get(Router);
-  }
-
-     private async fetchUser(): Promise<UserResponseDto> {
-
-    if (isPlatformBrowser(this.platformId)) {
-
-      const token = this.localStorageService.getItem('auth_token');
-
-      if (!token) return this.guestUser;
-
-      try {
-        //decode
-      const decoded: any = jwtDecode(token);
-      const isExpired = decoded.exp * 1000 < Date.now();
-
-    if (isExpired) {
-      this.logOut();        // Clears everything if expired
-      return this.guestUser;
-    }
-   
-      //call using user id
-      const response = await firstValueFrom(
-        getUserById(this.http, this.userConfig.rootUrl, { id: decoded.sub })
-      );
+  private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly queryClient = injectQueryClient();
+  private readonly localStorage = inject(LocalStorageService);
   
-      //send response
-      return response.body ?? this.guestUser;// Returns UserResponseDto with firstName, etc.
-      
-    } catch (err) {
-        return this.guestUser;
-      }
-    }
-    return { email: this.notConnected, roles: [] };
-  }
+  private readonly authConfig = inject(AuthApiConfiguration);
+  private readonly userConfig = inject(UserApiConfiguration);
+public readonly notConnected = 'ANONYMOUS_USER';
+  private readonly ANONYMOUS_USER: UserResponseDto = { 
+    email: 'ANONYMOUS_USER', 
+    firstName: 'Guest', 
+    roles: [] 
+  };
 
- 
-
- public connectedUserQuery = injectQuery(() => ({
+  /**
+   * Main Query: This is what components subscribe to.
+   */
+  public connectedUserQuery = injectQuery(() => ({
     queryKey: ['connected-user'],
     queryFn: () => this.fetchUser(),
+    retry: false,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   }));
 
+  /**
+   * Login: Authenticates and returns the response.
+   * Persistence is handled in the Component (or can be moved here).
+   */
+  logIn(credentials?: any): Observable<AuthenticationResponseDto | null> {
+    return login(this.http, this.authConfig.rootUrl, { body: credentials }).pipe(
+      map(res => res.body as AuthenticationResponseDto)
+    );
+  }
 
-  logOut() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('refresh_token');
-      // Force a reload to clear all TanStack queries and reset UI
-      window.location.href = '/';
+  /**
+   * CORE LOGIC: Fetches user profile, handles expiry and refresh automatically.
+   */
+  private async fetchUser(): Promise<UserResponseDto> {
+    if (!isPlatformBrowser(this.platformId)) return this.ANONYMOUS_USER;
+
+    const token = this.localStorage.getItem('auth_token');
+    const email = this.localStorage.getItem('email');
+
+    if (!token || !email) return this.ANONYMOUS_USER;
+
+    try {
+      // 1. Handle Expiry & Refresh
+      if (this.isTokenExpired()) {
+        const success = await this.tryTokenRefresh(email);
+        if (!success) return this.ANONYMOUS_USER;
+      }
+
+      // 2. Fetch User Data
+      const res = await firstValueFrom(
+        getUserByEmail(this.http, this.userConfig.rootUrl, { email })
+      );
+      return res.body ?? this.ANONYMOUS_USER;
+
+    } catch (error) {
+      this.logOut();
+      return this.ANONYMOUS_USER;
     }
   }
-hasAnyAuthorities(user: UserResponseDto, authorities: string[] | string): boolean {
-    if (!user || !user.roles || user.email === this.notConnected) return false;
-    const authArray = Array.isArray(authorities) ? authorities : [authorities];
-    return user.roles.some((role: string) => authArray.includes(role));
-  }
-  
-  
-  
-}
 
+  private async tryTokenRefresh(email: string): Promise<boolean> {
+    const refreshToken = this.localStorage.getItem('refresh_token');
+    if (!refreshToken) return false;
+
+    try {
+      const res = await firstValueFrom(
+        refresh(this.http, this.authConfig.rootUrl, { 
+          body: { refreshToken } 
+        }).pipe(map(r => r.body as AuthenticationResponseDto))
+      );
+
+      this.saveSession(res, email);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Session Management Helpers
+   */
+  public saveSession(data: AuthenticationResponseDto, email: string): void {
+    if (data.access_token) this.localStorage.setItem('auth_token', data.access_token);
+    if (data.refresh_token) this.localStorage.setItem('refresh_token', data.refresh_token);
+    this.localStorage.setItem('email', email);
+
+    if (data.expires_in) {
+      const absoluteExpiry = Date.now() + (data.expires_in * 1000);
+      this.localStorage.setItem('token_expire', absoluteExpiry.toString());
+    }
+  }
+
+  public isTokenExpired(): boolean {
+    const expiry = this.localStorage.getItem('token_expire');
+    if (!expiry) return true;
+    // Expired if current time is within 30 seconds of the stored timestamp
+    return Date.now() > (Number(expiry) - 30000);
+  }
+
+  public logOut(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      ['auth_token', 'refresh_token', 'token_expire', 'email'].forEach(k => 
+        this.localStorage.removeItem(k)
+      );
+      this.queryClient.setQueryData(['connected-user'], this.ANONYMOUS_USER);
+      this.router.navigate(['/login']);
+    }
+  }
+
+  public hasAnyAuthorities(user: UserResponseDto, authorities: string | string[]): boolean {
+    const roles = user?.roles ?? [];
+    const required = Array.isArray(authorities) ? authorities : [authorities];
+    return roles.some(r => required.includes(r));
+  }
+}

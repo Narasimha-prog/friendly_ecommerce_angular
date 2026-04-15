@@ -3,6 +3,10 @@
 
 export type { AddItem$Params as AddItem$Params } from './fn/cart-service-service/add-item';
 export { addItem as addItem } from './fn/cart-service-service/add-item';
+export type { IncrementItem$Params as IncrementItem$Params } from './fn/cart-service-service/increment-item';
+export { incrementItem as incrementItem } from './fn/cart-service-service/increment-item';
+export type { DecrementItem$Params as DecrementItem$Params } from './fn/cart-service-service/decrement-item';
+export { decrementItem as decrementItem } from './fn/cart-service-service/decrement-item';
 export type { GetCart$Params as GetCart$Params } from './fn/cart-service-service/get-cart';
 export { getCart as getCart } from './fn/cart-service-service/get-cart';
 export type { ClearCart$Params as ClearCart$Params } from './fn/cart-service-service/clear-cart';

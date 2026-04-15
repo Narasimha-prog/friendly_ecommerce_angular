@@ -28,7 +28,7 @@ export class CartComponent {
   }));
 
   // 2. Fetch User Data
-  connectedUserQuery = this.authService.fetch();
+  connectedUserQuery = this.authService.connectedUserQuery;
 
   // 3. Define Mutations for Actions
   // We use mutations because they "change" state on the server
@@ -42,6 +42,20 @@ export class CartComponent {
     onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['cart'] })
   }));
 
+
+    incrementItemMutation = injectMutation(() => ({
+    mutationFn: (productId: string) => lastValueFrom(this.cartService.increment(productId)),
+    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['cart'] })
+  }));
+
+
+
+    decrementItemMutation = injectMutation(() => ({
+    mutationFn: (productId: string) => lastValueFrom(this.cartService.decrement(productId)),
+    onSuccess: () => this.queryClient.invalidateQueries({ queryKey: ['cart'] })
+
+  }));
+
   // 4. Computed labels using TanStack Signals
   actionLabel = computed(() => {
     if (this.connectedUserQuery.isError()) return 'Login to checkout';
@@ -50,14 +64,14 @@ export class CartComponent {
 
   // 5. Action Methods
   addQuantity(productId: string) {
-    this.addItemMutation.mutate(productId);
+    this.incrementItemMutation.mutate(productId);
   }
 
   removeQuantity(productId: string, currentQuantity: number) {
-    if (currentQuantity > 1) {
+    
       // Logic for decrementing (usually another backend call or quantity: -1)
-      this.removeItemMutation.mutate(productId); 
-    }
+      this.decrementItemMutation.mutate(productId); 
+    
   }
 
   deleteItem(productId: string) {

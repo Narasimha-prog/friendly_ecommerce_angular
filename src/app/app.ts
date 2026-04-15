@@ -26,10 +26,10 @@ platformId = inject(PLATFORM_ID);
 
 constructor(){
 if(isPlatformBrowser(this.platformId)){
-  this.auth.fetch();
+  this.auth.connectedUserQuery;
 }
 
-this.auth.connectedUserQuery= this.auth.fetch();
+this.auth.connectedUserQuery= this.auth.connectedUserQuery;
 
 }
   ngOnInit() {

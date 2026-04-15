@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { CartResponseDto } from '../../models/cart-response-dto';
 
-export interface RemoveItem$Params {
+export interface IncrementItem$Params {
   productId: string;
 }
 
-export function removeItem(http: HttpClient, rootUrl: string, params: RemoveItem$Params, context?: HttpContext): Observable<StrictHttpResponse<CartResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, removeItem.PATH, 'delete');
+export function incrementItem(http: HttpClient, rootUrl: string, params: IncrementItem$Params, context?: HttpContext): Observable<StrictHttpResponse<CartResponseDto>> {
+  const rb = new RequestBuilder(rootUrl, incrementItem.PATH, 'patch');
   if (params) {
     rb.path('productId', params.productId, {});
   }
@@ -29,4 +29,4 @@ export function removeItem(http: HttpClient, rootUrl: string, params: RemoveItem
   );
 }
 
-removeItem.PATH = '/api/v1/cart/items/{productId}';
+incrementItem.PATH = '/api/v1/cart/items/{productId}/increment';
