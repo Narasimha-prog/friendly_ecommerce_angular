@@ -1,12 +1,61 @@
-@if(isValidAccess){
-    <div class="flex flex-col items-center justify-center mt-20">
-        <fa-icon class="text-green-300" [icon]="['fas','circle-check']" size="5x"></fa-icon>
-        <div class="font-bold text-2xl">Thanks for your order</div>
-        <div>You will receive conformation mail shortly..</div>
+<div class="max-w-2xl mx-auto mt-16 px-4">
+  
+  @if (orderQuery.isPending()) {
+    <div class="flex flex-col items-center">
+      <span class="loading loading-ring loading-lg text-primary"></span>
+      <p class="mt-4 text-gray-500">Verifying your order...</p>
     </div>
-}@else {
-   <div class="flex flex-col items-center justify-center mt-20">
-    <div class="font-bold text-2xl">Invalid cart session</div>
-    <div>Please try again</div>
-   </div>
-}
+  }
+
+  @else if (orderQuery.isSuccess()) {
+    <div class="card bg-base-100 shadow-xl border border-gray-100">
+      <div class="card-body items-center text-center">
+        
+        @if (orderQuery.data().status === 'CONFIRMED' || orderQuery.data().status === 'STOCK_RESERVED') {
+          <div class="bg-green-100 p-4 rounded-full mb-4">
+            <fa-icon class="text-green-600" [icon]="['fas','circle-check']" size="4x"></fa-icon>
+          </div>
+          <h2 class="card-title text-3xl font-bold text-gray-800">Payment Successful!</h2>
+          <p class="text-gray-600">Order #{{orderId()?.substring(0,8)}} has been placed.</p>
+          <div class="badge badge-success gap-2 mt-2 py-3 px-4">
+            Status: {{orderQuery.data().status}}
+          </div>
+          
+          <div class="py-6 w-full">
+            <div class="divider text-gray-400 text-xs">ORDER DETAILS</div>
+            <div class="flex justify-between text-sm mb-2">
+              <span class="text-gray-500">Total Paid:</span>
+              <span class="font-bold">{{orderQuery.data().status| currency:'INR'}}</span>
+            </div>
+          </div>
+        } @else {
+          <div class="bg-blue-100 p-4 rounded-full mb-4">
+            <fa-icon class="text-blue-600" [icon]="['fas','clock']" size="4x"></fa-icon>
+          </div>
+          <h2 class="card-title text-2xl font-bold">Processing Order...</h2>
+          <p class="text-gray-600">We are confirming your payment with the bank.</p>
+          <button (click)="orderQuery.refetch()" class="btn btn-ghost btn-sm mt-4">
+            <fa-icon [icon]="['fas','rotate']"></fa-icon> Check Status Again
+          </button>
+        }
+
+        <div class="card-actions justify-center mt-6 gap-4">
+          <button routerLink="/orders/my" class="btn btn-primary px-8">View My Orders</button>
+          <button routerLink="/" class="btn btn-outline">Continue Shopping</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @else {
+    <div class="alert alert-error shadow-lg">
+      <fa-icon [icon]="['fas','circle-xmark']" size="2x"></fa-icon>
+      <div>
+        <h3 class="font-bold">Invalid Order Session</h3>
+        <div class="text-xs">We couldn't verify this order. If you were charged, please check your email.</div>
+      </div>
+      <button routerLink="/orders/my" class="btn btn-sm">Check History</button>
+    </div>
+  }
+
+</div>

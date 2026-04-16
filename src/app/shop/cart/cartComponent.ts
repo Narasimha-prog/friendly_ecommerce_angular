@@ -4,9 +4,11 @@ import { CartService } from './cart-service';
 import { Toast } from '../../shared/toast/toast';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { RazorpayService } from '@eduvidu/angular-razorpay';
 import { AuthService } from '../../auth/authService';
+import { PaymentService } from '../../user/servises/payment-servises';
+import { OrderService } from '../../user/servises/order-service';
 
 @Component({
   selector: 'app-cart-component',
@@ -20,6 +22,11 @@ export class CartComponent {
   public authService = inject(AuthService);
   private toastService = inject(Toast);
   private queryClient = inject(QueryClient); // Used to invalidate cache
+
+  private paymentService=inject(PaymentService)
+  private router=inject(Router)
+  private orderService=inject(OrderService)
+
 
   // 1. Fetch Cart Data
   cartQuery = injectQuery(() => ({
@@ -82,6 +89,93 @@ export class CartComponent {
     const products = this.cartQuery.data()?.items ?? [];
     return products.reduce((acc, item) => acc + (item.subTotal ?? 0), 0);
   }
+checkoutMutation = injectMutation(() => ({
+    mutationFn: async () => {
+      const cartData = this.cartQuery.data();
+      if (!cartData || cartData.items?.length === 0) throw new Error('Cart is empty');
+
+      // 1. Map items to your backend OrderDto
+      const orderDto = {
+        items: cartData.items?.map(item => ({
+          productId: item.productId,
+          quantity: item.quantity
+        }))
+      };
+
+      // 2. Create Order in Backend
+      const order = await lastValueFrom(this.orderService.create(orderDto));
+
+      // 3. Create Payment (Razorpay Order ID)
+      const paymentInfo = await lastValueFrom(this.paymentService.initiatePayment(order.orderId!));
+
+      return { order, paymentInfo };
+    },
+    onSuccess: (data) => {
+      // 4. Open the Razorpay Modal
+      this.launchRazorpay(data.order.orderId!, data.paymentInfo);
+    },
+    onError: (error) => {
+      this.toastService.show('Failed to process checkout. Please try again.', 'ERROR');
+    }
+  }));
+
+  /**
+   * RAZORPAY MODAL LOGIC
+   */
+  private launchRazorpay(orderId: string, paymentInfo: any) {
+    const options = {
+      key: 'YOUR_RAZORPAY_KEY_ID', // Better to fetch from environment
+      amount: paymentInfo.amount, // Already in paise from backend
+      currency: paymentInfo.currency,
+      name: 'E-Shop',
+      description: `Payment for Order #${orderId.substring(0,8)}`,
+      order_id: paymentInfo.razorpayOrderId,
+      handler: (response: any) => {
+        // This runs if payment is successful at Razorpay
+        this.verifyAndRedirect(orderId, response);
+      },
+      prefill: {
+        email: this.connectedUserQuery.data()?.email,
+        name: this.connectedUserQuery.data()?.firstName
+      },
+      theme: { color: '#3399cc' },
+      modal: {
+        ondismiss: () => this.toastService.show('Payment cancelled', 'ERROR')
+      }
+    };
+
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
+  }
+
+  /**
+   * VERIFY PAYMENT & REDIRECT
+   */
+  private verifyAndRedirect(orderId: string, razorpayResponse: any) {
+    // Send the payment signatures to backend for verification
+    this.paymentService.verify({
+      razorpayPaymentId: razorpayResponse.razorpay_payment_id,
+      razorpayOrderId: razorpayResponse.razorpay_order_id,
+      razorpaySignature: razorpayResponse.razorpay_signature
+    }).subscribe({
+      next: () => {
+        // Success! Redirect to our new success page
+        this.router.navigate(['/cart-success'], { queryParams: { orderId } });
+      },
+      error: () => this.toastService.show('Payment verification failed!', 'ERROR')
+    });
+  }
+
+  // Action method for the UI button
+  onCheckout() {
+    if (this.connectedUserQuery.isError()) {
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.checkoutMutation.mutate();
+  }
+
 
 
 }
+

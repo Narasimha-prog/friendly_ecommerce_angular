@@ -1,50 +1,66 @@
-<div class="w-full justify-between items-center">
+<div class="w-full flex justify-between items-center mb-6">
    <div>
-      <h1 class="text-2xl font-bold ">Your Orders</h1>
-      <div>Here the list of your orders</div>
+      <h1 class="text-2xl font-bold text-gray-800">Your Orders</h1>
+      <p class="text-gray-600 text-sm">Review your purchase history and order status.</p>
    </div>
 </div>
-<div class="border-t w-full border-solid border-gray-300 mt-2 mb-5 ">
 
-</div>
-@if (orderQuery.isSuccess() && orderQuery.data().page.totalElements!==0) {
-<div class="overflow-x-auto border border-gray-300 rounded-md">
-    <table class="table table-lg table-zebra">
-      <thead class="border-gray-300">
-        <tr class="border-gray-300">
-            <th>#</th>
-            <th>Products</th>
-            <th>Status</th>
-            <th>No of items</th>
-            <th>Total Amount</th>
+<div class="border-t border-gray-200 mb-6"></div>
+
+@if (orderQuery.isLoading()) {
+    <div class="w-full flex justify-center py-12">
+        <span class="loading loading-spinner loading-lg text-primary"></span>
+    </div>
+}
+
+@else if (orderQuery.isError()) {
+    <div class="alert alert-error shadow-sm">
+        <fa-icon [icon]="['fas','triangle-exclamation']"></fa-icon>
+        <span>Unable to load your orders. Please try again later.</span>
+    </div>
+}
+
+@else if (orderQuery.data()?.content?.length === 0) {
+    <div class="flex flex-col items-center justify-center py-20 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+        <fa-icon [icon]="['fas','box-open']" class="text-gray-300 text-5xl mb-4"></fa-icon>
+        <h3 class="text-lg font-medium text-gray-900">No orders found</h3>
+        <p class="text-gray-500">You haven't placed any orders yet.</p>
+        <a routerLink="/products" class="btn btn-primary btn-sm mt-4">Start Shopping</a>
+    </div>
+}
+
+@else if (orderQuery.isSuccess()) {
+<div class="overflow-x-auto border border-gray-200 rounded-lg shadow-sm">
+    <table class="table table-zebra w-full">
+      <thead class="bg-gray-50">
+        <tr>
+            <th class="text-gray-600">Order ID</th>
+            <th class="text-gray-600">Products</th>
+            <th class="text-gray-600">Status</th>
+            <th class="text-gray-600">Qty</th>
+            <th class="text-gray-600">Total</th>
         </tr>
       </thead>
       <tbody>
-        @for(order of orderQuery.data().content!;track  order.publicId;let i=$index){
-         <tr class="border-t-2  border-gray-300 ">
-            <th>{{i+1}}</th>
-             <td>{{computeItemName(order.orderedItems)}}</td>
-             <td>{{order.status}}</td>
-             <td>{{computeItemQuantity(order.orderedItems)}}</td>
-             <td>{{computeTotal(order.orderedItems) | currency}}</td>
+        @for(order of orderQuery.data().content; track order.orderId) {
+         <tr class="hover">
+            <td class="font-mono text-xs">{{order.orderId?.substring(0,8)}}...</td>
+             <td class="max-w-xs truncate">{{computeItemName(order.items)}}</td>
+             <td>
+                <span class="badge badge-sm" [ngClass]="{
+                    'badge-success': order.status === 'CONFIRMED',
+                    'badge-warning': order.status === 'CREATED',
+                    'badge-error': order.status === 'CANCELLED',
+                    'badge-info': order.status === 'STOCK_RESERVED'
+                }">
+                    {{order.status}}
+                </span>
+             </td>
+             <td>{{computeItemQuantity(order.items)}}</td>
+             <td class="font-bold text-gray-800">{{order.status}}</td>
         </tr>
         }
-       
       </tbody>
     </table>
 </div>
-
-}@else if (orderQuery.isPending()) {
-    <div class="w-full justify-center flex">
-        <span class="loading loading-spinner loading-lg"></span>
-    </div>
-}@else if (orderQuery.data()?.page?.totalElements===0) {
-    <div class="alert alert-info">
-     <fa-icon [icon]="['fas','circle-exclamation']"  size="2x" ></fa-icon>
-     <span>No Orders created yet.</span>
-    </div>
-}@else if (orderQuery.isError() && checkIfPlatFormBrowser()) {
-    <div class="alert alert-error">
-    <span>Error! Failed to load orders! </span>
-    </div>
 }

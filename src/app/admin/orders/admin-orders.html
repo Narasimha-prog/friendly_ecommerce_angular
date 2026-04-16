@@ -25,11 +25,11 @@
         @for(order of orderQuery.data().content!;track  order.orderId;let i=$index){
          <tr class="border-t-2  border-gray-300 ">
             <th>{{i+1}}</th>
-             <td>{{computeItemName(order.items)}}</td>
+             <td>{{computeItemName(order.items!)}}</td>
              <td>{{order.status}}</td>
              <td>{{order.customerId}}</td>
              <td>{{order.orderId}}</td>
-             <td>{{computeItemQuantity(order.items)}}</td>
+             <td>{{computeItemQuantity(order.items!)}}</td>
              <!-- <td>{{computeTotal(order.items) | currency}}</td> -->
         </tr>
         }

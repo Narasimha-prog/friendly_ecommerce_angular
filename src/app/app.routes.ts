@@ -16,6 +16,8 @@ import { CategoryFilter } from './shop/shop-collection/category-filter';
 import { Login } from './auth/login/login';
 import { UpdateProduct } from './admin/product/update-product/update-product';
 import { CartComponent } from './shop/cart/cartComponent';
+import { UserOrder } from './user/order/user-order';
+import { CartSuccessComponent } from './shop/cart-success/cart-success.componenet';
 
 
 export const appRoutes: Route[] = [
@@ -93,14 +95,14 @@ export const appRoutes: Route[] = [
             authorities: ['USER'],
          }
     },
-   // {
-   //    path:'cart/success',
-   //    component:CartSuccessComponent
-   // },
-   // {
-   //    path:'users/orders',
-   //    component:UserOrder
-   // },
+   {
+      path:'cart/success',
+      component:CartSuccessComponent
+   },
+   {
+      path:'users/orders',
+      component:UserOrder
+   },
    {
       path:'users/login',
       component:Login

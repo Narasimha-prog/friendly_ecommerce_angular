@@ -4,7 +4,7 @@
 import { OrderItemDto } from '../models/order-item-dto';
 export interface OrderResponseDto {
   customerId?: string;
-  items: Array<OrderItemDto>;
+  items?: Array<OrderItemDto>;
   orderId?: string;
   status?: 'CREATED' | 'CONFIRMED' | 'CANCELLED' | 'FAILED' | 'STOCK_RESERVED' | 'STOCK_FAILED';
 }

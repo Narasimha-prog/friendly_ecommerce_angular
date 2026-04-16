@@ -7,14 +7,14 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { PaymentCreateResponse } from '../../models/payment-create-response';
+import { OrderResponseDto } from '../../models/order-response-dto';
 
-export interface CreatePayment$Params {
+export interface GetOrderById$Params {
   orderId: string;
 }
 
-export function createPayment(http: HttpClient, rootUrl: string, params: CreatePayment$Params, context?: HttpContext): Observable<StrictHttpResponse<PaymentCreateResponse>> {
-  const rb = new RequestBuilder(rootUrl, createPayment.PATH, 'post');
+export function getOrderById(http: HttpClient, rootUrl: string, params: GetOrderById$Params, context?: HttpContext): Observable<StrictHttpResponse<OrderResponseDto>> {
+  const rb = new RequestBuilder(rootUrl, getOrderById.PATH, 'get');
   if (params) {
     rb.path('orderId', params.orderId, {});
   }
@@ -24,9 +24,9 @@ export function createPayment(http: HttpClient, rootUrl: string, params: CreateP
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<PaymentCreateResponse>;
+      return r as StrictHttpResponse<OrderResponseDto>;
     })
   );
 }
 
-createPayment.PATH = '/api/v1/payments/create/{orderId}';
+getOrderById.PATH = '/api/v1/orders/{orderId}';

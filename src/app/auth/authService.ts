@@ -13,7 +13,7 @@ import { LocalStorageService } from './local-storage';
 import { login, refresh } from '../api/auth/functions';
 import { getUserByEmail } from '../api/user/functions';
 import { UserResponseDto } from '../api/user/models';
-import { AuthenticationResponseDto, RefreshTokenRequestDto } from '../api/auth/models';
+import { AccessTokenResponseDto, AuthenticationResponseDto, RefreshTokenRequestDto } from '../api/auth/models';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -39,7 +39,8 @@ public readonly notConnected = 'ANONYMOUS_USER';
     queryKey: ['connected-user'],
     queryFn: () => this.fetchUser(),
     retry: false,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5 // 5 minutes
   }));
 
   /**
@@ -56,6 +57,7 @@ public readonly notConnected = 'ANONYMOUS_USER';
    * CORE LOGIC: Fetches user profile, handles expiry and refresh automatically.
    */
   private async fetchUser(): Promise<UserResponseDto> {
+
     if (!isPlatformBrowser(this.platformId)) return this.ANONYMOUS_USER;
 
     const token = this.localStorage.getItem('auth_token');
@@ -66,7 +68,7 @@ public readonly notConnected = 'ANONYMOUS_USER';
     try {
       // 1. Handle Expiry & Refresh
       if (this.isTokenExpired()) {
-        const success = await this.tryTokenRefresh(email);
+        const success = await this.tryTokenRefresh();
         if (!success) return this.ANONYMOUS_USER;
       }
 
@@ -82,7 +84,7 @@ public readonly notConnected = 'ANONYMOUS_USER';
     }
   }
 
-  private async tryTokenRefresh(email: string): Promise<boolean> {
+  public async tryTokenRefresh(): Promise<boolean> {
     const refreshToken = this.localStorage.getItem('refresh_token');
     if (!refreshToken) return false;
 
@@ -90,10 +92,10 @@ public readonly notConnected = 'ANONYMOUS_USER';
       const res = await firstValueFrom(
         refresh(this.http, this.authConfig.rootUrl, { 
           body: { refreshToken } 
-        }).pipe(map(r => r.body as AuthenticationResponseDto))
+        }).pipe(map(r => r.body as AccessTokenResponseDto))
       );
 
-      this.saveSession(res, email);
+      this.saveSession(res);
       return true;
     } catch {
       return false;
@@ -103,15 +105,15 @@ public readonly notConnected = 'ANONYMOUS_USER';
   /**
    * Session Management Helpers
    */
-  public saveSession(data: AuthenticationResponseDto, email: string): void {
-    if (data.access_token) this.localStorage.setItem('auth_token', data.access_token);
-    if (data.refresh_token) this.localStorage.setItem('refresh_token', data.refresh_token);
-    this.localStorage.setItem('email', email);
-
-    if (data.expires_in) {
-      const absoluteExpiry = Date.now() + (data.expires_in * 1000);
-      this.localStorage.setItem('token_expire', absoluteExpiry.toString());
+  public saveSession(data: AccessTokenResponseDto): void {
+    if (data.accessToken) this.localStorage.setItem('auth_token', data.accessToken);
+    if (data.expiresIn){
+      const expireAt = Date.now() + (data.expiresIn * 1000);
+            this.localStorage.setItem('token_expire', expireAt.toString());
     }
+    if (data.username) {
+            this.localStorage.setItem('email', data.username);
+          }
   }
 
   public isTokenExpired(): boolean {
