@@ -9,7 +9,7 @@
 # Sensitive environment files
 src/environments/environment.ts
 src/environments/environment.devlopment.ts
-src/environments/environment.production.ts
+
 
 
 # Node
@@ -75,3 +75,4 @@ dist-ssr
 *.sw?
 
 
+.env
