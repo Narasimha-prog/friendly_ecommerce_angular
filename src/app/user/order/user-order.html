@@ -44,20 +44,16 @@
       <tbody>
         @for(order of orderQuery.data().content; track order.orderId) {
          <tr class="hover">
-            <td class="font-mono text-xs">{{order.orderId?.substring(0,8)}}...</td>
-             <td class="max-w-xs truncate">{{computeItemName(order.items)}}</td>
-             <td>
-                <span class="badge badge-sm" [ngClass]="{
-                    'badge-success': order.status === 'CONFIRMED',
-                    'badge-warning': order.status === 'CREATED',
-                    'badge-error': order.status === 'CANCELLED',
-                    'badge-info': order.status === 'STOCK_RESERVED'
-                }">
-                    {{order.status}}
-                </span>
-             </td>
+            <td class="max-w-xs">{{order.orderId?.substring(0,8)}}...</td>
+             <td class="max-w-xs ">{{computeItemName(order.items)}}...</td>
+            <td>
+  <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border" 
+        [ngClass]="statusClass(order?.status)">
+    {{ order?.status }}
+  </span>
+</td>
              <td>{{computeItemQuantity(order.items)}}</td>
-             <td class="font-bold text-gray-800">{{order.status}}</td>
+             <td class="font-bold text-gray-800">{{order?.totalPrice}}</td>
         </tr>
         }
       </tbody>

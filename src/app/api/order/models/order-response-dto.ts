@@ -6,5 +6,6 @@ export interface OrderResponseDto {
   customerId?: string;
   items?: Array<OrderItemDto>;
   orderId?: string;
+  totalPrice?: number;
   status?: 'CREATED' | 'CONFIRMED' | 'CANCELLED' | 'FAILED' | 'STOCK_RESERVED' | 'STOCK_FAILED';
 }

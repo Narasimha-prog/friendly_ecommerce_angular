@@ -37,17 +37,34 @@ export class UserOrder {
 
   // Utility methods for the template
   computeItemName(items: any[] = []): string {
-    return items.map(item => item.productName || 'Unknown Product').join(', ');
+    return items.map(item => item.productId.substring(0,8) || 'Unknown Product').join(', ');
   }
 
   computeItemQuantity(items: any[] = []): number {
-    return items.reduce((acc, item) => acc + (item.quantity || 0), 0);
+    return items.reduce((acc, item) => acc + (item.quantity), 0);
   }
 
   // Your backend usually sends the totalAmount in OrderResponseDto, 
   // but here is the manual fallback if needed:
   computeTotal(items: any[] = []): number {
-    return items.reduce((acc, item) => acc + (item.quantity * item.price), 0);
+    return items.reduce((acc, item) => acc + (item.quantity), 0);
   }
   
+
+ statusClass(status: string | undefined): string {
+  switch (status) {
+    case 'CONFIRMED': 
+      return 'bg-green-100 text-green-800 border-green-200';
+    case 'CREATED': 
+      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+    case 'FAILED': 
+      return 'bg-red-100 text-red-800 border-red-200';
+    case 'STOCK_RESERVED': 
+      return 'bg-blue-100 text-blue-800 border-blue-200';
+    default: 
+      return 'bg-gray-100 text-gray-800 border-gray-200';
+  }
 }
+}
+
+

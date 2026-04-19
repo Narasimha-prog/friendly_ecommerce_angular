@@ -6,6 +6,12 @@
 /out-tsc
 /bazel-out
 
+# Sensitive environment files
+src/environments/environment.ts
+src/environments/environment.devlopment.ts
+src/environments/environment.production.ts
+
+
 # Node
 /node_modules
 npm-debug.log
@@ -67,3 +73,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
