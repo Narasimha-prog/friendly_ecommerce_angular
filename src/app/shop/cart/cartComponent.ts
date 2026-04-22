@@ -3,7 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { CartService } from './cart-service';
 import { Toast } from '../../shared/toast/toast';
 import { injectMutation, injectQuery, QueryClient } from '@tanstack/angular-query-experimental';
-import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom, retry } from 'rxjs';
 import { Router, RouterLink } from '@angular/router';
 import { RazorpayService } from '@eduvidu/angular-razorpay';
 import { AuthService } from '../../auth/authService';
@@ -107,13 +107,19 @@ checkoutMutation = injectMutation(() => ({
       const order = await lastValueFrom(this.orderService.create(orderDto));
 
       // 3. Create Payment (Razorpay Order ID)
-      const paymentInfo = await lastValueFrom(this.paymentService.initiatePayment(order.orderId!));
+    const paymentInfo = await lastValueFrom(
+        this.paymentService.initiatePayment(order.orderId!).pipe(
+          retry({
+            count: 3,
+            delay: 1000, // Wait 1000ms between attempts
+          })
+        )
+      );
 
       return { order, paymentInfo };
     },
-    onSuccess: (data) => {
-      // 4. Open the Razorpay Modal
-      this.launchRazorpay(data.order.orderId!, data.paymentInfo);
+    onSuccess: () => {
+     this.toastService.show('Order ready! Click "Pay Now" to proceed.', 'SUCCESS');
     },
     onError: (error) => {
       this.toastService.show('Failed to process checkout. Please try again.', 'ERROR');
@@ -123,7 +129,7 @@ checkoutMutation = injectMutation(() => ({
   /**
    * RAZORPAY MODAL LOGIC
    */
-  private launchRazorpay(orderId: string, paymentInfo: any) {
+  public launchRazorpay(orderId: string, paymentInfo: any) {
     const options = {
       key: environment.razorpayKeyId, // Better to fetch from environment
       amount: paymentInfo.amount, // Already in paise from backend
@@ -173,7 +179,9 @@ checkoutMutation = injectMutation(() => ({
       this.router.navigate(['/login']);
       return;
     }
+   setTimeout(() => {
     this.checkoutMutation.mutate();
+  }, 0);
   }
 
 

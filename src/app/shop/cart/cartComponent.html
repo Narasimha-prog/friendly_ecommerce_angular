@@ -106,19 +106,29 @@
           </div>
 
           <div class="card-actions mt-8">
-            <button 
-  class="btn btn-primary w-full" 
-  [disabled]="checkoutMutation.isPending() || cartQuery.data()?.items?.length === 0"
-  (click)="onCheckout()">
-  
-  @if (checkoutMutation.isPending()) {
-    <span class="loading loading-spinner"></span>
-    Processing...
+  @if (!checkoutMutation.isSuccess()) {
+    <button 
+      class="btn btn-primary w-full" 
+      [disabled]="checkoutMutation.isPending()"
+      (click)="onCheckout()">
+      @if (checkoutMutation.isPending()) {
+        <span class="loading loading-spinner"></span> Processing...
+      } @else {
+        Checkout
+      }
+    </button>
   } @else {
-    {{ actionLabel() }}
+  @if (checkoutMutation.data(); as data) {
+  @if (data.order.orderId && data.paymentInfo) {
+    <button 
+      class="btn btn-success w-full"
+      (click)="launchRazorpay(data.order.orderId, data.paymentInfo)">
+      PAY NOW
+    </button>
   }
-</button>
-          </div>
+}
+  }
+</div>
         </div>
       </div>
     </div>
