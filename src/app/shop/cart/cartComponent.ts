@@ -9,6 +9,7 @@ import { RazorpayService } from '@eduvidu/angular-razorpay';
 import { AuthService } from '../../auth/authService';
 import { PaymentService } from '../../user/servises/payment-servises';
 import { OrderService } from '../../user/servises/order-service';
+import { environment } from '../../../environments/environment.devlopment';
 
 @Component({
   selector: 'app-cart-component',
@@ -124,7 +125,7 @@ checkoutMutation = injectMutation(() => ({
    */
   private launchRazorpay(orderId: string, paymentInfo: any) {
     const options = {
-      key: 'YOUR_RAZORPAY_KEY_ID', // Better to fetch from environment
+      key: environment.razorpayKeyId, // Better to fetch from environment
       amount: paymentInfo.amount, // Already in paise from backend
       currency: paymentInfo.currency,
       name: 'E-Shop',
