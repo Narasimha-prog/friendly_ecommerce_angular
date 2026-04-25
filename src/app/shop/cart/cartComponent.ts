@@ -103,6 +103,9 @@ checkoutMutation = injectMutation(() => ({
         }))
       };
 
+        setTimeout(()=>{
+
+        },500)
       // 2. Create Order in Backend
       const order = await lastValueFrom(this.orderService.create(orderDto));
 

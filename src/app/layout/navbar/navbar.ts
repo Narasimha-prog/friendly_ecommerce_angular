@@ -58,8 +58,9 @@ export class Navbar implements OnInit{
 
   logIn():void { 
     console.log('Logging in...');  
+  
     this.closeDropDownMenu();
-     this.authService.logIn();
+    
   }
 
   logOut():void {
