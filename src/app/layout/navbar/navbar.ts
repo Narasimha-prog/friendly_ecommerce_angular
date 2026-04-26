@@ -5,9 +5,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome'
 import { RouterLink } from '@angular/router';
 import { UserProductService } from '../../user/servises/user-product';
 import { injectQuery } from '@tanstack/angular-query-experimental';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 // import { CartService } from '../../shop/cart/cart-service';
 import { AuthService } from '../../auth/authService';
+import { CartService } from '../../shop/cart/cart-service';
 
 @Component({
   selector: 'app-navbar',
@@ -23,29 +24,29 @@ export class Navbar implements OnInit{
   
   productService=inject(UserProductService);
 
-  // cartService=inject(CartService);
+  cartService=inject(CartService);
 
   ngOnInit(): void {
-  //  this.listenToCart();
+
   }
+cartQuery = injectQuery(() => ({
+    queryKey: ['cart'],
+    queryFn: () => lastValueFrom(this.cartService.getCartDetails()),
+    // staleTime: 1000 * 60 * 5, // Optional: Keep data fresh for 5 mins
+  }));
 
-  nbItemsInCart=0;
+  // Create a computed signal to calculate the total
+  totalQuantity = computed(() => {
+    const items = this.cartQuery.data()?.items ?? [];
+    return items.reduce((acc, item) => acc + (item.quantity ?? 0), 0);
+  });
 
-  // listenToCart() {
-  //   this.cartService.addedToCart.subscribe((productsInCart)=>{
-  //   this.nbItemsInCart=productsInCart.reduce((acc,product)=> acc+product.quantity,0);
-    
-  //   })
-  // }
-  
+
 
   closeMenu(menu: HTMLDetailsElement) {
       menu.removeAttribute('open');
     
   }
-
-
-
 
   categoryQuery=injectQuery(()=>({
     queryKey:['categories'],

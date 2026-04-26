@@ -84,7 +84,7 @@
 
       <div routerLink="/cart" class="relative cursor-pointer group p-2">
         <div class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-bold text-white ring-2 ring-white group-hover:scale-110 transition-transform">
-          {{nbItemsInCart}}
+          {{totalQuantity()}}
         </div>
         <fa-icon [icon]="['fas', 'cart-shopping']" class="text-xl text-gray-600 group-hover:text-blue-600"></fa-icon>
       </div>

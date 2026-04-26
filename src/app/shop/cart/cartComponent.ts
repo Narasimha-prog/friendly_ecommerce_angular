@@ -170,7 +170,7 @@ checkoutMutation = injectMutation(() => ({
     }).subscribe({
       next: () => {
         // Success! Redirect to our new success page
-        this.router.navigate(['/cart-success'], { queryParams: { orderId } });
+        this.router.navigate(['/cart/success'], { queryParams: { orderId } });
       },
       error: () => this.toastService.show('Payment verification failed!', 'ERROR')
     });
@@ -182,9 +182,8 @@ checkoutMutation = injectMutation(() => ({
       this.router.navigate(['/login']);
       return;
     }
-   setTimeout(() => {
     this.checkoutMutation.mutate();
-  }, 0);
+
   }
 
 

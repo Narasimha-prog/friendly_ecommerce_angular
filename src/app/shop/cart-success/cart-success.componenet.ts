@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../cart/cart-service';
@@ -13,33 +13,37 @@ import { OrderService } from '../../user/servises/order-service';
   standalone: true,
   imports: [CommonModule, FontAwesomeModule, RouterLink],
   templateUrl: './cart-success.componenet.html',
-})
-export class CartSuccessComponent {
+})export class CartSuccessComponent {
   private orderService = inject(OrderService);
   private cartService = inject(CartService);
   private queryClient = injectQueryClient();
   
-  // Get orderId from URL: /cart-success?orderId=123...
   orderId = injectQueryParams('orderId');
 
-  /**
-   * Fetch order details to verify status
-   */
   orderQuery = injectQuery(() => ({
     queryKey: ['order-success', this.orderId()],
     queryFn: async () => {
       const id = this.orderId();
       if (!id) throw new Error('No Order ID found');
-      
-      const order = await lastValueFrom(this.orderService.getOrderById(id));
-      
-      // Cleanup logic: If order is found, clear the local cart
-      this.cartService.clearCart(); 
-      this.queryClient.invalidateQueries({ queryKey: ['cart'] });
-      
-      return order;
+      return await lastValueFrom(this.orderService.getOrderById(id));
     },
     enabled: !!this.orderId(),
-    retry: 3
   }));
+
+  constructor() {
+    // This effect runs whenever the status of orderQuery changes
+    effect(() => {
+      if (this.orderQuery.isSuccess()) {
+        console.log('Order verified, clearing cart...');
+        
+        // 1. Clear the backend/local state
+        this.cartService.clearCart().subscribe({
+          next: () => {
+            // 2. Tell TanStack Query the cart data is now empty/stale
+            this.queryClient.invalidateQueries({ queryKey: ['cart'] });
+          }
+        });
+      }
+    });
+  }
 }

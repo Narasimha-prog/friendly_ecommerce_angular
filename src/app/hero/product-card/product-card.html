@@ -26,10 +26,10 @@
 
       <div class="mt-4 flex items-center gap-2">
         <span class="text-xl font-extrabold text-gray-900">
-          {{product().price | currency}}
+          {{product().price | currency : 'INR'}}
         </span>
         <span class="text-sm line-through text-gray-400">
-           {{ (product().price) | currency }} 
+           {{ (product().price) | currency :'INR'}} 
         </span>
       </div>
       
