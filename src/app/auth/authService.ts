@@ -11,8 +11,8 @@ import { UserApiConfiguration } from '../api/user/user-api-configuration';
 import { LocalStorageService } from './local-storage';
 
 import { login, refresh } from '../api/auth/functions';
-import { getUserByEmail } from '../api/user/functions';
-import { UserResponseDto } from '../api/user/models';
+import { createUser, getUserByEmail } from '../api/user/functions';
+import { UserRequestDto, UserResponseDto } from '../api/user/models';
 import { AccessTokenResponseDto, AuthenticationResponseDto, RefreshTokenRequestDto } from '../api/auth/models';
 
 @Injectable({ providedIn: 'root' })
@@ -53,6 +53,12 @@ public readonly notConnected = 'ANONYMOUS_USER';
     );
   }
 
+  register(userData: UserRequestDto): Observable<UserResponseDto>{
+     
+    return createUser(this.http,this.userConfig.rootUrl,{body: userData}).pipe(
+      map(res=> res.body as UserResponseDto)
+    )
+  }
   /**
    * CORE LOGIC: Fetches user profile, handles expiry and refresh automatically.
    */

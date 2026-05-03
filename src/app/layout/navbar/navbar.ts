@@ -29,10 +29,14 @@ export class Navbar implements OnInit{
   ngOnInit(): void {
 
   }
+  
 cartQuery = injectQuery(() => ({
     queryKey: ['cart'],
     queryFn: () => lastValueFrom(this.cartService.getCartDetails()),
-    // staleTime: 1000 * 60 * 5, // Optional: Keep data fresh for 5 mins
+     enabled: this.authService.connectedUserQuery.status() === 'success' && 
+           this.authService.connectedUserQuery.data()?.email !== this.authService.notConnected,
+     staleTime: 1000 * 60 * 5, // Optional: Keep data fresh for 5 mins
+     refetchOnWindowFocus: true
   }));
 
   // Create a computed signal to calculate the total
@@ -51,6 +55,9 @@ cartQuery = injectQuery(() => ({
   categoryQuery=injectQuery(()=>({
     queryKey:['categories'],
     queryFn:()=> firstValueFrom(this.productService.findAllCategories()),
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true
+  
   }))
 
 

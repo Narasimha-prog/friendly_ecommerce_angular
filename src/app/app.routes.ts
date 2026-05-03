@@ -18,6 +18,7 @@ import { UpdateProduct } from './admin/product/update-product/update-product';
 import { CartComponent } from './shop/cart/cartComponent';
 import { UserOrder } from './user/order/user-order';
 import { CartSuccessComponent } from './shop/cart-success/cart-success.componenet';
+import { Register } from './auth/register/register';
 
 
 export const appRoutes: Route[] = [
@@ -106,6 +107,10 @@ export const appRoutes: Route[] = [
    {
       path:'users/login',
       component:Login
+   },
+    {
+      path:'users/register',
+      component:Register
    },
    {
          path: 'admin/orders/list',

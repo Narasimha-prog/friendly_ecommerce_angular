@@ -34,7 +34,7 @@ export const roleCheckGuard: CanActivateFn = (
       if (hasAccess) return true;
 
       //  REDIRECT: Send them to login and remember where they wanted to go
-      router.navigate(['/users/login'], { queryParams: { returnUrl: state.url } });
+      router.navigate(['/users/login']);
       return false;
     }),
       take(1),

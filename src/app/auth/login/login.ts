@@ -4,12 +4,12 @@ import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angu
 import { AuthService } from '../authService';
 import { AuthenticationResponseDto } from '../../api/auth/models';
 import { LocalStorageService } from '../local-storage';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { injectQueryClient } from '@tanstack/angular-query-experimental';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,RouterLink],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
