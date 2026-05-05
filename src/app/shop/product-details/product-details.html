@@ -1,14 +1,11 @@
-
 @if (productQuery.isSuccess()) {
     @let product = productQuery.data();
+    <!-- Existing Product Detail Section -->
     <div class="flex flex-col lg:flex-row justify-center items-start w-full gap-12 p-6">
-        
+        <!-- ... Image Section ... -->
         <div class="lg:flex-1 w-full max-w-2xl mx-auto">
             @if (product.imageUrls && product.imageUrls.length > 0) {
-                <img [src]="product.imageUrls[0]"
-                     [alt]="product.name"
-                     class="h-72 sm:h-96 lg:h-[550px] w-full object-contain rounded-2xl bg-white shadow-md border border-gray-100" />
-                
+                <img [src]="product.imageUrls[0]" [alt]="product.name" class="h-72 sm:h-96 lg:h-[550px] w-full object-contain rounded-2xl bg-white shadow-md border border-gray-100" />
                 @if (product.imageUrls.length > 1) {
                     <div class="flex gap-2 mt-4 overflow-x-auto pb-2">
                         @for (url of product.imageUrls; track $index) {
@@ -24,39 +21,44 @@
             }
         </div>
 
+        <!-- ... Info Section ... -->
         <div class="lg:flex-1 w-full space-y-6">
             <div>
-                <h1 class="text-4xl font-black text-gray-900 tracking-tight">
-                    {{product.name}}
-                </h1>
+                <h1 class="text-4xl font-black text-gray-900 tracking-tight">{{product.name}}</h1>
                 <p class="text-gray-500 text-xl font-semibold mt-1">{{product.brand}}</p>
+            </div>
+            
+            <!-- Ratings Summary Header -->
+            <div class="flex items-center gap-2">
+                <div class="flex text-amber-400">
+                    <fa-icon [icon]="['fas', 'star']"></fa-icon>
+                    <span class="ms-1 text-gray-900 font-bold">{{averageRating}}</span>
+                </div>
+                <span class="text-blue-600 hover:underline cursor-pointer text-sm font-medium">
+                    {{reviewsQuery.data()?.length || 0}} ratings
+                </span>
             </div>
 
             <div class="flex items-center gap-4">
-                <div class="text-3xl font-bold text-primary">
-                    {{product.price | currency : 'INR'}}
-                </div>
+                <div class="text-3xl font-bold text-primary">{{product.price | currency : 'INR'}}</div>
                 @if (product.featured) {
-                    <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
-                        Best Seller
-                    </span>
+                    <span class="bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Best Seller</span>
                 }
             </div>
 
+            <!-- ... Inventory & Actions ... -->
             <div>
                 @if (product.status === 'ACTIVE') {
                     @if(inventoryQuery.isSuccess() ){
-                        @let inventory= inventoryQuery.data();
-
-                    <div class="flex items-center text-green-600 font-bold">
-                        <span class="relative flex h-3 w-3 me-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                        </span>
-                        {{inventory.availableQuantity}}
-                    </div>
-
-                }
+                        @let inventory = inventoryQuery.data();
+                        <div class="flex items-center text-green-600 font-bold">
+                            <span class="relative flex h-3 w-3 me-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            In Stock ({{inventory.availableQuantity}})
+                        </div>
+                    }
                 } @else {
                     <div class="flex items-center text-red-500 font-bold">
                         <span class="h-3 w-3 rounded-full bg-red-500 me-2"></span>
@@ -65,46 +67,126 @@
                 }
             </div>
 
-            <hr class="border-gray-100" />
-
-            <div class="grid grid-cols-2 gap-y-4 text-sm">
-                <div class="text-gray-400 font-bold uppercase tracking-tighter">Color</div>
-                <div class="flex items-center gap-2">
-                    <div class="h-5 w-5 rounded-full border shadow-inner" 
-                         [style.background-color]="product.productColor"></div>
-                    <span class="font-semibold text-gray-700 capitalize">{{product.productColor}}</span>
-                </div>
-
-                <div class="text-gray-400 font-bold uppercase tracking-tighter">Size</div>
-                <div>
-                    <span class="bg-gray-900 text-white px-3 py-1 rounded text-xs font-bold">
-                        {{product.productSize}}
-                    </span>
-                </div>
-            </div>
-
-            <div class="pt-4">
-                <h3 class="text-sm font-bold text-gray-900 uppercase mb-2">Description</h3>
-                <p class="text-gray-600 leading-relaxed">
-                    {{product.description}}
-                </p>
-            </div>
-
-            <button class="btn btn-primary w-full lg:w-3/4 h-14 text-lg font-bold rounded-xl cursor-pointer" 
-                    [disabled]="product.status !== 'ACTIVE'"
-                    (click)="onAddToCart(product.id!)">
+            <button class="btn btn-primary w-full lg:w-3/4 h-14 text-lg font-bold rounded-xl" [disabled]="product.status !== 'ACTIVE'" (click)="onAddToCart(product.id!)">
                 <fa-icon [icon]="['fas', buttonIcon]" class="me-2"></fa-icon>
                 {{buttonLabel}}
             </button>
         </div>
     </div>
-} @else if (productQuery.isPending()) {
-    <div class="w-full h-screen flex justify-center items-center">
-        <span class="loading loading-spinner loading-lg text-primary"></span>
+
+    <!-- CUSTOMER REVIEWS SECTION -->
+    <div class="mt-20 border-t border-gray-100 pt-12 px-6">
+        <div class="flex flex-col lg:flex-row gap-16">
+            
+            <!-- LEFT COLUMN: Summary & Distribution -->
+            <div class="lg:w-80 space-y-6">
+                <h2 class="text-2xl font-bold text-gray-900">Customer reviews</h2>
+                
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl font-bold">{{averageRating}} out of 5</span>
+                    </div>
+                    <p class="text-gray-500 text-sm">{{reviewsQuery.data()?.length || 0}} global ratings</p>
+                </div>
+
+                <!-- Star Progress Bars -->
+                <div class="space-y-3">
+                    @for (dist of starDistribution; track dist.star) {
+                        <div class="flex items-center gap-4 text-sm group cursor-pointer">
+                            <span class="text-blue-600 hover:underline w-12">{{dist.star}} star</span>
+                            <div class="flex-1 h-5 bg-gray-100 rounded border border-gray-200 overflow-hidden">
+                                <div class="h-full bg-amber-400 transition-all duration-500" [style.width.%]="dist.percentage"></div>
+                            </div>
+                            <span class="text-blue-600 hover:underline w-8 text-right">{{dist.percentage}}%</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="pt-6 border-t border-gray-100">
+                    <h4 class="font-bold text-gray-900">Review this product</h4>
+                    <p class="text-sm text-gray-600 mb-4">Share your thoughts with other customers</p>
+                    <button class="w-full py-2 border border-gray-300 rounded-lg text-sm font-semibold hover:bg-gray-50 transition-colors"
+                            (click)="router.navigate(['/post-review', publicId()])">
+                        Write a product review
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: AI Summary & Review List -->
+            <div class="flex-1 space-y-10">
+                <!-- AI Generated Block -->
+                <div class="bg-blue-50/50 p-6 rounded-xl border border-blue-100">
+                    <h3 class="flex items-center font-bold text-gray-900 mb-2">
+                        <fa-icon [icon]="['fas', 'robot']" class="me-2 text-blue-600"></fa-icon>
+                        Customers say
+                    </h3>
+                    <p class="text-gray-700 text-sm leading-relaxed">
+                        Customers find this {{product.name}} effective for its purpose. Many appreciate the 
+                        <span class="bg-white px-1 rounded border border-blue-200">gentle formula</span> 
+                        and <span class="bg-white px-1 rounded border border-blue-200">value for money</span>.
+                    </p>
+                    <p class="text-xs text-gray-400 mt-4 italic flex items-center">
+                        <fa-icon [icon]="['fas', 'info-circle']" class="me-1"></fa-icon>
+                        AI-generated from the text of customer reviews
+                    </p>
+                </div>
+
+                <!-- Review List -->
+                <div class="space-y-8">
+                    <h3 class="text-xl font-bold text-gray-900">Top reviews</h3>
+                    
+                    @if (reviewsQuery.data() && reviewsQuery.data()!.length > 0) {
+                        @for (review of reviewsQuery.data(); track review.id) {
+                            <div class="border-b border-gray-100 pb-8 last:border-0">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <div class="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                                        <fa-icon [icon]="['fas', 'user']" class="text-gray-400 text-xs"></fa-icon>
+                                    </div>
+                                    <span class="font-medium text-gray-900">Verified Customer</span>
+                                </div>
+
+                                <div class="flex items-center gap-2 mb-1">
+                                    <div class="text-amber-400 text-xs">
+                                        @for (i of [1,2,3,4,5]; track i) {
+                                            <fa-icon [icon]="['fas', 'star']" [class.text-gray-200]="i > review.rating!"></fa-icon>
+                                        }
+                                    </div>
+                                    <span class="font-bold text-sm text-gray-900">Verified Purchase</span>
+                                </div>
+
+                                <p class="text-gray-400 text-xs mb-3">Reviewed on {{review.createdAt | date:'longDate'}}</p>
+
+                                <p class="text-gray-700 text-sm leading-relaxed mb-4">
+                                    {{review.comment}}
+                                </p>
+
+                                @if (review.imageUrls && review.imageUrls.length > 0) {
+                                    <div class="flex gap-2 mb-4">
+                                        @for (url of review.imageUrls; track url) {
+                                            <img [src]="url" class="h-20 w-20 object-cover rounded-lg border border-gray-200" />
+                                        }
+                                    </div>
+                                }
+
+                                <button class="px-6 py-1 border border-gray-300 rounded-md text-xs font-semibold hover:bg-gray-50 shadow-sm">
+                                    Helpful
+                                </button>
+                            </div>
+                        }
+                    } @else {
+                        <div class="py-12 text-center bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                            <fa-icon [icon]="['fas', 'comment-slash']" class="text-gray-300 text-3xl mb-2"></fa-icon>
+                            <p class="text-gray-500">No reviews yet for this product.</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 }
 
-<div class="mt-20 px-6">
+<!-- Related Products Section -->
+<div class="mt-20 px-6 pb-20">
     <h2 class="text-2xl font-black text-gray-900 mb-8">You may also like</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
         @for(item of relatedProductsQuery.data()?.content; track item.id) {

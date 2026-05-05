@@ -7,18 +7,16 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { UserResponseDto } from '../../models/user-response-dto';
+import { ReviewResponseDto } from '../../models/review-response-dto';
 
-export interface AddRole$Params {
-  id: string;
-  role: 'USER' | 'ADMIN' | 'SELLER' | 'SUPPORT';
+export interface GetReviewsByProduct$Params {
+  productId: string;
 }
 
-export function addRole(http: HttpClient, rootUrl: string, params: AddRole$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, addRole.PATH, 'patch');
+export function getReviewsByProduct(http: HttpClient, rootUrl: string, params: GetReviewsByProduct$Params, context?: HttpContext): Observable<StrictHttpResponse<Array<ReviewResponseDto>>> {
+  const rb = new RequestBuilder(rootUrl, getReviewsByProduct.PATH, 'get');
   if (params) {
-    rb.path('id', params.id, {});
-    rb.query('role', params.role, {});
+    rb.path('productId', params.productId, {});
   }
 
   return http.request(
@@ -26,9 +24,9 @@ export function addRole(http: HttpClient, rootUrl: string, params: AddRole$Param
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserResponseDto>;
+      return r as StrictHttpResponse<Array<ReviewResponseDto>>;
     })
   );
 }
 
-addRole.PATH = '/api/v1/users/{id}/roles/add';
+getReviewsByProduct.PATH = '/api/v1/reviews/product/{productId}';

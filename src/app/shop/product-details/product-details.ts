@@ -11,6 +11,7 @@ import { FaIconComponent, FontAwesomeModule } from "@fortawesome/angular-fontawe
 import { ProductCard } from "../../hero/product-card/product-card";
 import { CartService } from '../cart/cart-service';
 import { InventoryService } from '../../user/servises/inventory-service';
+import { ReviewService } from '../../user/servises/review-service';
 
 
 @Component({
@@ -28,8 +29,9 @@ export class ProductDetails {
   lastPublicId='';
   cartService=inject(CartService);
   inventoryService=inject(InventoryService)
-  
+  reviewService = inject(ReviewService);
   private queryClient = inject(QueryClient);
+
 
   pageRequest:Pagination={
     page:0,
@@ -59,6 +61,29 @@ export class ProductDetails {
        enabled: !!this.productQuery.data()
    }));
 
+   reviewsQuery = injectQuery(() => ({
+    queryKey: ['reviews', this.publicId()],
+    queryFn: () => firstValueFrom(this.reviewService.getReviewsByProduct(this.publicId()!)),
+    enabled: !!this.publicId(),
+  }));
+  get starDistribution() {
+    const reviews = this.reviewsQuery.data() || [];
+    if (reviews.length === 0) return [];
+    
+    const counts = [5, 4, 3, 2, 1].map(star => {
+      const count = reviews.filter(r => r.rating === star).length;
+      const percentage = Math.round((count / reviews.length) * 100);
+      return { star, percentage, count };
+    });
+    return counts;
+  }
+
+  get averageRating() {
+    const reviews = this.reviewsQuery.data() || [];
+    if (reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, r) => acc + r.rating!, 0);
+    return (sum / reviews.length).toFixed(1);
+  }
 constructor(){
  effect(() => {
       if (this.productQuery.isError()) {

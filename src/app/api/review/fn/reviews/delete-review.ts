@@ -7,28 +7,25 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { UserResponseDto } from '../../models/user-response-dto';
 
-export interface AddRole$Params {
+export interface DeleteReview$Params {
   id: string;
-  role: 'USER' | 'ADMIN' | 'SELLER' | 'SUPPORT';
 }
 
-export function addRole(http: HttpClient, rootUrl: string, params: AddRole$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, addRole.PATH, 'patch');
+export function deleteReview(http: HttpClient, rootUrl: string, params: DeleteReview$Params, context?: HttpContext): Observable<StrictHttpResponse<void>> {
+  const rb = new RequestBuilder(rootUrl, deleteReview.PATH, 'delete');
   if (params) {
     rb.path('id', params.id, {});
-    rb.query('role', params.role, {});
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: '*/*', context })
+    rb.build({ responseType: 'text', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserResponseDto>;
+      return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
     })
   );
 }
 
-addRole.PATH = '/api/v1/users/{id}/roles/add';
+deleteReview.PATH = '/api/v1/reviews/{id}';

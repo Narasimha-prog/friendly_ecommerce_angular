@@ -7,29 +7,29 @@ import { filter, map } from 'rxjs/operators';
 import { StrictHttpResponse } from '../../strict-http-response';
 import { RequestBuilder } from '../../request-builder';
 
-import { UserRequestDto } from '../../models/user-request-dto';
-import { UserResponseDto } from '../../models/user-response-dto';
+import { ReviewRequestDto } from '../../models/review-request-dto';
+import { ReviewResponseDto } from '../../models/review-response-dto';
 
-export interface UpdateUser$Params {
+export interface UpdateReview$Params {
   id: string;
-      body: UserRequestDto
+      body: ReviewRequestDto
 }
 
-export function updateUser(http: HttpClient, rootUrl: string, params: UpdateUser$Params, context?: HttpContext): Observable<StrictHttpResponse<UserResponseDto>> {
-  const rb = new RequestBuilder(rootUrl, updateUser.PATH, 'put');
+export function updateReview(http: HttpClient, rootUrl: string, params: UpdateReview$Params, context?: HttpContext): Observable<StrictHttpResponse<ReviewResponseDto>> {
+  const rb = new RequestBuilder(rootUrl, updateReview.PATH, 'put');
   if (params) {
     rb.path('id', params.id, {});
     rb.body(params.body, 'application/json');
   }
 
   return http.request(
-    rb.build({ responseType: 'json', accept: '*/*', context })
+    rb.build({ responseType: 'blob', accept: '*/*', context })
   ).pipe(
     filter((r: any): r is HttpResponse<any> => r instanceof HttpResponse),
     map((r: HttpResponse<any>) => {
-      return r as StrictHttpResponse<UserResponseDto>;
+      return r as StrictHttpResponse<ReviewResponseDto>;
     })
   );
 }
 
-updateUser.PATH = '/api/v1/users/{id}';
+updateReview.PATH = '/api/v1/reviews/{id}';

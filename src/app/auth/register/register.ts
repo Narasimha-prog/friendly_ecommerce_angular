@@ -5,8 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { injectMutation } from '@tanstack/angular-query-experimental';
 import { lastValueFrom } from 'rxjs';
-import { UserRequestDto } from '../../api/user/models/user-request-dto'; // Adjust path
-import { createUser } from '../../api/user/functions';
+ import { UserRequestDto } from '../../api/user/models/user-request-dto'; // Adjust path
 import { AuthService } from '../authService';
 import { COUNTRY_LIST } from '../../user/model/register';
 

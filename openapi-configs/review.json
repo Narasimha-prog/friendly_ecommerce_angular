@@ -1,0 +1,8 @@
+{
+  "input": "src/openapi/review-service.json",
+  "output": "src/app/api/review",         
+  "servicePrefix": "Review",              
+  "module": "ReviewApiModule",           
+  "configuration": "ReviewApiConfiguration",
+  "strict": true
+}
