@@ -6,10 +6,11 @@ import { AuthenticationResponseDto } from '../../api/auth/models';
 import { LocalStorageService } from '../local-storage';
 import { Router, RouterLink } from '@angular/router';
 import { injectQueryClient } from '@tanstack/angular-query-experimental';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-login',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule,RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule,RouterLink,FontAwesomeModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
@@ -69,5 +70,9 @@ private fb = inject(FormBuilder);
     }
   }
 
-  
+  showPassword = false;
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
 }

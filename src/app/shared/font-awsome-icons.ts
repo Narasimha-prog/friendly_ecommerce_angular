@@ -1,8 +1,11 @@
 import { IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faCartShopping, faCheck, faCircleCheck, faCircleExclamation, faCommentSlash, faExclamationCircle, faInfoCircle, faRobot, faShoppingCart, faStar, faTruckFast, faUser, faUserCheck, faX, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faCamera, faCartShopping, faCheck, faCircleCheck, faCircleExclamation, faCommentSlash, faExclamationCircle, faEye, faEyeSlash, faInfoCircle, faRobot, faShoppingCart, faStar, faTruckFast, faUser, faUserCheck, faX, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { faFacebook, faTwitter ,faYoutube} from '@fortawesome/free-brands-svg-icons';
 
 export const    fontAwesomeIcons: IconDefinition[] = [
+    faEye,
+    faEyeSlash,
+    faUserCheck,
     faUserCheck,
 	faUser,
     faCartShopping,
@@ -19,5 +22,6 @@ export const    fontAwesomeIcons: IconDefinition[] = [
     faCommentSlash,
     faStar,
     faRobot,
-    faInfoCircle
+    faInfoCircle,
+    faCamera 
 ];

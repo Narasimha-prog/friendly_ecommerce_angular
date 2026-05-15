@@ -19,6 +19,7 @@ import { CartComponent } from './shop/cart/cartComponent';
 import { UserOrder } from './user/order/user-order';
 import { CartSuccessComponent } from './shop/cart-success/cart-success.componenet';
 import { Register } from './auth/register/register';
+import { PostReview } from './shop/post-review/post-review';
 
 
 export const appRoutes: Route[] = [
@@ -108,6 +109,15 @@ export const appRoutes: Route[] = [
       path:'users/login',
       component:Login
    },
+   { 
+
+  path: 'post-review/:id', 
+  component: PostReview,
+  canActivate: [roleCheckGuard],
+         data: {
+            authorities: ['USER'],
+         }
+},
     {
       path:'users/register',
       component:Register

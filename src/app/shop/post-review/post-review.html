@@ -1,0 +1,52 @@
+<div class="max-w-xl mx-auto mt-12 p-8 bg-white rounded-2xl shadow-sm border border-gray-100">
+  <h2 class="text-3xl font-black text-gray-900 mb-8">Write a Review</h2>
+
+  <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <!-- Star Rating Selection (Same as before) -->
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-3">Overall rating</label>
+      <div class="flex gap-2">
+        @for (star of [1, 2, 3, 4, 5]; track star) {
+          <button type="button" (click)="setRating(star)" (mouseenter)="hoveredStar.set(star)" (mouseleave)="hoveredStar.set(0)" class="text-3xl transition-transform active:scale-90">
+            <fa-icon [icon]="['fas', 'star']" [class.text-amber-400]="star <= (hoveredStar() || (reviewForm.controls.rating.value ?? 0))"[class.text-gray-200]="star > (hoveredStar() || (reviewForm.controls.rating.value ?? 0))"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Image Upload Section -->
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-3">Add photos</label>
+      <div class="grid grid-cols-4 gap-4">
+        <!-- Previews -->
+        @for (url of previews(); track $index) {
+          <div class="relative h-20 w-20 group">
+            <img [src]="url" class="h-full w-full object-cover rounded-lg border border-gray-200" />
+            <button type="button" (click)="removeFile($index)" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full h-5 w-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+              <fa-icon [icon]="['fas', 'times']"></fa-icon>
+            </button>
+          </div>
+        }
+        
+        <!-- Upload Button -->
+        <label class="h-20 w-20 flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
+          <fa-icon [icon]="['fas', 'camera']" class="text-gray-400"></fa-icon>
+          <span class="text-[10px] text-gray-400 font-bold mt-1">Add Photo</span>
+          <input type="file" class="hidden" (change)="onFileSelected($event)" multiple accept="image/*" />
+        </label>
+      </div>
+    </div>
+
+    <!-- Comment Field -->
+    <div>
+      <label class="block text-sm font-bold text-gray-700 mb-2">Review comment</label>
+      <textarea formControlName="comment" rows="4" class="w-full p-4 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all" placeholder="Tell us more about your experience..."></textarea>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex gap-4 pt-4">
+      <button type="button" (click)="router.navigate(['/product', publicId()])" class="flex-1 py-3 border border-gray-300 rounded-xl font-bold hover:bg-gray-50">Cancel</button>
+      <button type="submit" [disabled]="reviewForm.invalid" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 disabled:opacity-50 shadow-md">Submit</button>
+    </div>
+  </form>
+</div>
