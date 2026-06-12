@@ -24,9 +24,11 @@ export class CreateCategory {
   router = inject(Router)
 
   name=new FormControl<string>('',{nonNullable: true,validators:[Validators.required,Validators.minLength(3)]});
+  description=new FormControl<string>('',{nonNullable: true,validators:[Validators.required,Validators.minLength(3)]});
 
   public createCategoryForm = this.formBuilder.nonNullable.group<CreateCategoryFormContent>({
     name:this.name,
+    description:this.description
   })
   
   loading=false;
@@ -44,7 +46,8 @@ export class CreateCategory {
     
     const categoryToCreate: CategoryRequestDto = {
 
-      name: this.createCategoryForm.getRawValue().name
+      name: this.createCategoryForm.getRawValue().name,
+      description: this.createCategoryForm.getRawValue().description
   }
 
   this.loading= true;

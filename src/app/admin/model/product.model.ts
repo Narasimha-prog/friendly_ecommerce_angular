@@ -36,6 +36,7 @@ export interface Product extends BaseProduct {
 
 export type CreateCategoryFormContent={
     name:FormControl<string>;
+    description:FormControl<string>
 }
 
 

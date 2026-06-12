@@ -32,8 +32,6 @@ export const appConfig: ApplicationConfig = {
 
     provideQueryClient(new QueryClient()),
      LocalStorageService,
-    //  provideAuthApiConfiguration('https://2948-2409-40f0-9-315-94d8-3c53-c0a0-a3dc.ngrok-free.app'),
-    // provideProductApiConfiguration('https://2948-2409-40f0-9-315-94d8-3c53-c0a0-a3dc.ngrok-free.app')
   ],
 
   
