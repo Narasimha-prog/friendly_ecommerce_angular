@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -17,11 +17,14 @@ import { COUNTRY_LIST } from '../../user/model/register';
   styleUrl: './register.css',
 })
 export class Register {
+  showPassword = signal<boolean>(false);
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authenticationService=inject(AuthService)
-
   protected readonly countries = COUNTRY_LIST;
+
+
+
 
   // 1. Setup the Mutation
   registerMutation = injectMutation(() => ({
@@ -38,6 +41,7 @@ export class Register {
   }));
 
   // 2. Setup the Form
+  
   registerForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -74,5 +78,10 @@ export class Register {
 
       this.registerMutation.mutate(payload);
     }
+  }
+
+  //for password 
+  togglePasswordVisibility(): void {
+    this.showPassword.update(show => !show);
   }
 }
