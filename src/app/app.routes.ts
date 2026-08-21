@@ -20,6 +20,7 @@ import { UserOrder } from './user/order/user-order';
 import { CartSuccessComponent } from './shop/cart-success/cart-success.componenet';
 import { Register } from './auth/register/register';
 import { PostReview } from './shop/post-review/post-review';
+import { Profile } from './user/profile/profile';
 
 
 export const appRoutes: Route[] = [
@@ -104,6 +105,10 @@ export const appRoutes: Route[] = [
    {
       path:'users/orders',
       component:UserOrder
+   },
+     {
+      path:'users/profile',
+      component:Profile
    },
    {
       path:'users/login',

@@ -15,6 +15,7 @@ import { CreateProductRequestDto, UpdateProductRequestDto } from '../../../api/p
   styleUrl: './update-product.css',
 })
 export class UpdateProduct implements OnInit {
+  
   private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder).nonNullable;
   private userProductService = inject(UserProductService);

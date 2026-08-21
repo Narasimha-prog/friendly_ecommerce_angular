@@ -13,15 +13,14 @@ import { StrictHttpResponse } from '../../api/strict-http-response';
 export class OrderService {
   
 
-  http=inject(HttpClient);
-  orderConfig=inject(OrderApiConfiguration);
+  private http=inject(HttpClient);
 
-  /**
-   * Creates a new order in the Order Microservice
-   */
+  private orderConfig=inject(OrderApiConfiguration);
+
+
+
   create(body: OrderDto): Observable<OrderResponseDto> {
     return createOrder(this.http, this.orderConfig.rootUrl, { body }).pipe(
-      // We map the StrictHttpResponse to just the body for easier use in mutations
       map(res => res.body as OrderResponseDto)
     );
   }
@@ -37,7 +36,7 @@ export class OrderService {
       return getAllOrders(this.http,this.orderConfig.rootUrl,pageRequest).pipe(
         map((response:StrictHttpResponse<PageResponseOrderResponseDto>)=> response.body)
       );
-  }
+  } // We map the StrictHttpResponse to just the body for easier use in mutations
 
   getOrderById(orderId:string){
     return getOrderById(this.http,this.orderConfig.rootUrl,{orderId})

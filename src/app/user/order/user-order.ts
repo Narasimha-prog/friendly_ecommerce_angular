@@ -14,6 +14,7 @@ import { OrderItemDto } from '../../api/order/models';
   styleUrl: './user-order.scss',
 })
 export class UserOrder {
+
   private orderService = inject(OrderService);
   private platformId = inject(PLATFORM_ID);
 
@@ -44,7 +45,7 @@ export class UserOrder {
     return items.reduce((acc, item) => acc + (item.quantity), 0);
   }
 
-  // Your backend usually sends the totalAmount in OrderResponseDto, 
+
   // but here is the manual fallback if needed:
   computeTotal(items: any[] = []): number {
     return items.reduce((acc, item) => acc + (item.quantity), 0);

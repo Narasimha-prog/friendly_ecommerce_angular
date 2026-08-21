@@ -7,6 +7,7 @@ import { LocalStorageService } from '../local-storage';
 import { Router, RouterLink } from '@angular/router';
 import { injectQueryClient } from '@tanstack/angular-query-experimental';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { TokenService } from '../../user/servises/token-service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private localStorageService=inject(LocalStorageService);
   private router=inject(Router);
+  private tokenService=inject(TokenService);
 
   // Define the form structure
   loginForm = this.fb.group({
@@ -28,11 +30,13 @@ private fb = inject(FormBuilder);
   });
 
   onSubmit() {
+
     if (this.loginForm.valid) {
       const credentials = this.loginForm.value;
       
       // Call your backend through the AuthService
       this.authService.logIn(credentials).subscribe({
+
         next: (response:AuthenticationResponseDto| null) => {
          //  Check for 'access_token' (matching your DTO)
         if (response?.access_token) {
@@ -42,7 +46,12 @@ private fb = inject(FormBuilder);
           if (response.refresh_token) {
             this.localStorageService.setItem('refresh_token', response.refresh_token);
           }
-        
+         
+           const userId = this.tokenService.getUserId(response.access_token);
+
+         if (userId) {
+          this.localStorageService.setItem('user_id', userId);
+          } 
 
           if (response.expires_in) {
             const expireAt = Date.now() + (response.expires_in * 1000);

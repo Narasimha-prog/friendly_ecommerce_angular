@@ -17,7 +17,6 @@ import { StrictHttpResponse } from '../../api/strict-http-response';
 export class UserProductService {
 
 private http = inject(HttpClient);
-
 private productConfig=inject(ProductApiConfiguration);
 
 

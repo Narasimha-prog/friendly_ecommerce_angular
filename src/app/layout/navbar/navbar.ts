@@ -21,11 +21,12 @@ export class Navbar implements OnInit{
 
 
   authService = inject(AuthService);
-  
+
   productService=inject(UserProductService);
 
   cartService=inject(CartService);
 
+  
   ngOnInit(): void {
 
   }

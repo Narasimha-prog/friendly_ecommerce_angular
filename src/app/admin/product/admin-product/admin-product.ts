@@ -55,7 +55,7 @@ constructor(){
  }
 
  updateProduct(productId:string){
- this
+ 
  }
  private onDeletionError(error: unknown){
   console.error('Error while deleting product:', error);
